@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="零售英语">
+<meta name="theme-color" content="#4A90D9">
+<title>零售导购英语短句手册</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.app-header {
+  background: linear-gradient(135deg, #4A90D9, #357ABD);
+  color: #fff;
+  padding: 20px 16px 12px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.app-header h1 { font-size: 22px; font-weight: 600; }
+.app-header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+.tabs {
+  display: flex;
+  background: #fff;
+  position: sticky;
+  top: 82px;
+  z-index: 9;
+  border-bottom: 1px solid #e8e8e8;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #888;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.tab.active { color: #4A90D9; border-bottom-color: #4A90D9; }
+
+.content { padding: 12px 16px; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.card:active { transform: scale(0.98); background: #f8f9ff; }
+
+.card-left { flex: 1; min-width: 0; }
+.card-en { font-size: 16px; color: #333; font-weight: 500; margin-bottom: 3px; }
+.card-zh { font-size: 13px; color: #999; }
+
+.speak-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-left: 10px;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+.card:active .speak-icon { background: #4A90D9; }
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  padding: 8px 0 6px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* 添加短句区域 */
+.add-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.add-section h3 { font-size: 15px; margin-bottom: 12px; color: #333; }
+.add-section input {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid #ddd; border-radius: 8px;
+  font-size: 14px; margin-bottom: 8px;
+  outline: none;
+}
+.add-section input:focus { border-color: #4A90D9; }
+.add-section button {
+  width: 100%; padding: 12px;
+  background: #4A90D9; color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+}
+.add-section button:active { background: #357ABD; }
+
+.empty-hint {
+  text-align: center;
+  color: #bbb;
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+.delete-btn {
+  background: none; border: none;
+  color: #ccc; font-size: 20px;
+  cursor: pointer; padding: 4px 8px;
+  line-height: 1;
+}
+.delete-btn:active { color: #e74c3c; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.75); color: #fff;
+  padding: 10px 24px; border-radius: 20px;
+  font-size: 14px; z-index: 100; opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>零售导购英语</h1>
+  <p>点击短句可听发音 · 添加到主屏幕当 App 用</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-page="home">首页</button>
+  <button class="tab" data-page="unisex">男女同款</button>
+  <button class="tab" data-page="stock">库存尺码</button>
+  <button class="tab" data-page="fitting">试穿建议</button>
+  <button class="tab" data-page="custom">我的短句</button>
+</div>
+
+<div class="content">
+  <div class="page active" id="home"></div>
+  <div class="page" id="unisex"></div>
+  <div class="page" id="stock"></div>
+  <div class="page" id="fitting"></div>
+  <div class="page" id="custom"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 短句数据 =====
+const phrases = {
+  home: {
+    greeting: [
+      { en: 'Hello! Welcome to our store.', zh: '您好！欢迎光临。' },
+      { en: 'How can I help you today?', zh: '今天有什么可以帮您的？' },
+      { en: 'Are you looking for anything specific?', zh: '您在找什么特定的款式吗？' },
+      { en: 'Feel free to look around.', zh: '请随便看看。' },
+      { en: 'Let me know if you need any help.', zh: '有需要随时叫我。' },
+    ],
+    service: [
+      { en: 'This way, please.', zh: '这边请。' },
+      { en: 'Please take your time.', zh: '不着急，慢慢看。' },
+      { en: 'We have a great selection today.', zh: '今天我们有很多好看的款式。' },
+      { en: 'Is this your first time here?', zh: '您是第一次来我们家吗？' },
+      { en: 'We also have an online store.', zh: '我们也有线上店铺。' },
+    ],
+    payment: [
+      { en: 'We accept cash, card, and mobile payment.', zh: '我们支持现金、刷卡和手机支付。' },
+      { en: 'Would you like a receipt?', zh: '需要小票吗？' },
+      { en: 'Please scan the QR code to pay.', zh: '请扫码支付。' },
+      { en: 'Would you like it wrapped as a gift?', zh: '需要帮您包装成礼品吗？' },
+      { en: 'Thank you! Have a nice day!', zh: '谢谢惠顾！祝您愉快！' },
+    ],
+  },
+  unisex: {
+    style: [
+      { en: 'This is a unisex style.', zh: '这款是男女同款。' },
+      { en: 'Both men and women can wear this.', zh: '这款男女都可以穿。' },
+      { en: 'It comes in both men\'s and women\'s sizes.', zh: '这个有男女尺码。' },
+      { en: 'This design is gender-neutral.', zh: '这款设计不分性别。' },
+      { en: 'Many couples buy matching ones.', zh: '很多情侣会买同款搭配。' },
+    ],
+    recommend: [
+      { en: 'This is one of our best-sellers.', zh: '这是我们销量最好的款式之一。' },
+      { en: 'It\'s very popular this season.', zh: '这季非常流行。' },
+      { en: 'The quality is excellent.', zh: '质量非常好。' },
+      { en: 'It goes well with almost anything.', zh: '这件很百搭。' },
+      { en: 'Would you like to try the other color?', zh: '要试试另一个颜色吗？' },
+    ],
+  },
+  stock: {
+    size: [
+      { en: 'What size are you looking for?', zh: '您找什么尺码？' },
+      { en: 'We have sizes from S to XXL.', zh: '我们有 S 到 XXL 码。' },
+      { en: 'This runs a bit small.', zh: '这款偏小一点。' },
+      { en: 'This runs a bit large.', zh: '这款偏大一点。' },
+      { en: 'Would you like to try a size up?', zh: '要试试大一码的吗？' },
+      { en: 'Let me measure it for you.', zh: '我帮您量一下。' },
+    ],
+    inventory: [
+      { en: 'Let me check if we have it in stock.', zh: '我帮您查一下库存。' },
+      { en: 'Yes, we have this in stock.', zh: '这件还有货。' },
+      { en: 'Sorry, this one is out of stock.', zh: '不好意思，这件没货了。' },
+      { en: 'We can order it for you.', zh: '我们可以帮您订。' },
+      { en: 'A new shipment will arrive next week.', zh: '下周会有新货到。' },
+      { en: 'This is the last one we have.', zh: '这是最后一件了。' },
+    ],
+  },
+  fitting: {
+    try: [
+      { en: 'Would you like to try it on?', zh: '要试穿一下吗？' },
+      { en: 'The fitting room is over there.', zh: '试衣间在那边。' },
+      { en: 'How does it fit?', zh: '穿起来感觉怎么样？' },
+      { en: 'Does it feel comfortable?', zh: '穿着舒服吗？' },
+      { en: 'Take your time trying it on.', zh: '慢慢试，不着急。' },
+    ],
+    feedback: [
+      { en: 'It looks great on you!', zh: '您穿上很好看！' },
+      { en: 'This color really suits you.', zh: '这个颜色很适合您。' },
+      { en: 'It fits you perfectly.', zh: '非常合身。' },
+      { en: 'The fabric is very soft and breathable.', zh: '面料很软很透气。' },
+      { en: 'It highlights your figure nicely.', zh: '很显身材。' },
+      { en: 'Shall I bring you a different size?', zh: '要我帮您换一个尺码吗？' },
+    ],
+  },
+};
+
+// ===== 渲染短句卡片 =====
+function renderCards(container, data, pageName, sectionName) {
+  data.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-en', item.en);
+    card.onclick = function(e) {
+      if (e.target.closest('.delete-btn')) return;
+      speak(item.en);
+    };
+    card.innerHTML = `
+      <div class="card-left">
+        <div class="card-en">${item.en}</div>
+        <div class="card-zh">${item.zh}</div>
+      </div>
+      <div class="speak-icon">🔊</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// ===== 构建各个页面 =====
+function buildPages() {
+  // 首页
+  const home = document.getElementById('home');
+  home.innerHTML = '';
+  for (const [section, items] of Object.entries(phrases.home)) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = section === 'greeting' ? '接待问候' : section === 'service' ? '引导服务' : '支付结账';
+    home.appendChild(title);
+    renderCards(home, items, 'home', section);
+  }
+
+  // 男女同款
+  const unisex = document.getElementById('unisex');
+  unisex.innerHTML = '';
+  for (const [section, items] of Object.entries(phrases.unisex)) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = section === 'style' ? '款式说明' : '推荐话术';
+    unisex.appendChild(title);
+    renderCards(unisex, items, 'unisex', section);
+  }
+
+  // 库存尺码
+  const stock = document.getElementById('stock');
+  stock.innerHTML = '';
+  for (const [section, items] of Object.entries(phrases.stock)) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = section === 'size' ? '尺码相关' : '库存查询';
+    stock.appendChild(title);
+    renderCards(stock, items, 'stock', section);
+  }
+
+  // 试穿建议
+  const fitting = document.getElementById('fitting');
+  fitting.innerHTML = '';
+  for (const [section, items] of Object.entries(phrases.fitting)) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = section === 'try' ? '引导试穿' : '试穿反馈';
+    fitting.appendChild(title);
+    renderCards(fitting, items, 'fitting', section);
+  }
+
+  // 我的短句
+  renderCustomPage();
+}
+
+// ===== 自定义短句 =====
+function renderCustomPage() {
+  const custom = document.getElementById('custom');
+  custom.innerHTML = '';
+
+  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
+
+  if (saved.length === 0) {
+    custom.innerHTML = '<div class="empty-hint">还没有添加自定义短句<br>在下方输入你的专属短句吧</div>';
+  } else {
+    saved.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.onclick = function(e) {
+        if (e.target.closest('.delete-btn')) return;
+        speak(item.en);
+      };
+      card.innerHTML = `
+        <div class="card-left">
+          <div class="card-en">${item.en}</div>
+          <div class="card-zh">${item.zh}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <button class="delete-btn" data-index="${i}" title="删除">×</button>
+          <div class="speak-icon" style="margin-left:0;">🔊</div>
+        </div>
+      `;
+      card.querySelector('.delete-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        deletePhrase(i);
+      });
+      custom.appendChild(card);
+    });
+  }
+
+  // 添加表单
+  const addSection = document.createElement('div');
+  addSection.className = 'add-section';
+  addSection.innerHTML = `
+    <h3>添加新短句</h3>
+    <input type="text" id="enInput" placeholder="输入英文短句">
+    <input type="text" id="zhInput" placeholder="输入中文翻译">
+    <button id="addBtn">添加到我的短句</button>
+  `;
+  custom.appendChild(addSection);
+
+  document.getElementById('addBtn').addEventListener('click', addPhrase);
+}
+
+function addPhrase() {
+  const en = document.getElementById('enInput').value.trim();
+  const zh = document.getElementById('zhInput').value.trim();
+  if (!en || !zh) { showToast('请填写英文和中文'); return; }
+  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
+  saved.push({ en, zh });
+  localStorage.setItem('customPhrases', JSON.stringify(saved));
+  renderCustomPage();
+  showToast('已添加！');
+}
+
+function deletePhrase(index) {
+  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
+  saved.splice(index, 1);
+  localStorage.setItem('customPhrases', JSON.stringify(saved));
+  renderCustomPage();
+  showToast('已删除');
+}
+
+// ===== 语音朗读 =====
+function speak(text) {
+  if (!('speechSynthesis' in window)) {
+    showToast('您的浏览器不支持语音朗读');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.85;
+  utterance.pitch = 1;
+  window.speechSynthesis.speak(utterance);
+}
+
+// ===== Tab 切换 =====
+document.getElementById('tabs').addEventListener('click', function(e) {
+  if (!e.target.classList.contains('tab')) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  const pageName = e.target.getAttribute('data-page');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageName).classList.add('active');
+  if (pageName === 'custom') renderCustomPage();
+});
+
+// ===== Toast 提示 =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+// ===== 初始化 =====
+buildPages();
+
+// ===== PWA 注册 =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    // Simple cache-first service worker
+    if (!navigator.serviceWorker.controller) {
+      // No SW needed for basic PWA installability
+    }
+  });
+}
+</script>
+</body>
+</html>
