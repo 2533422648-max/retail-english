@@ -303,7 +303,7 @@ const PHRASES={
 // ============================================================
 // 全局状态
 // ============================================================
-const LS={done:'study_v5_done',steps:'study_v5_steps',streak:'study_v5_streak',review:'review_v5',my:'my_v5'};
+const LS={done:'study_v5_done',steps:'study_v5_steps',streak:'study_v5_streak',review:'review_v5',my:'my_v5',learned:'learned_v5'};
 let currentDay,dayData,weekData;
 let stepState={flash:0,pron:0,dict:0,trans:0,speak:0,gram:0};
 let stepActive=0; // 0=flash,1=pron,2=dict,3=trans,4=speak,5=gram
@@ -318,6 +318,8 @@ function getSteps(){try{return JSON.parse(localStorage.getItem(LS.steps)||'{}')}
 function saveSteps(v){localStorage.setItem(LS.steps,JSON.stringify(v))}
 function getMy(){try{return JSON.parse(localStorage.getItem(LS.my)||'[]')}catch(e){return[]}}
 function saveMy(v){localStorage.setItem(LS.my,JSON.stringify(v))}
+function getLearned(){try{return JSON.parse(localStorage.getItem(LS.learned)||'[]')}catch(e){return[]}}
+function saveLearned(v){localStorage.setItem(LS.learned,JSON.stringify(v))}
 function getReview(){try{return JSON.parse(localStorage.getItem(LS.review)||'{}')}catch(e){return{}}}
 function saveReview(v){localStorage.setItem(LS.review,JSON.stringify(v))}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
@@ -359,9 +361,20 @@ function checkIn(){
   const done=getDone();
   if(done.includes(currentDay)){toast('今天已经打卡了');return}
   done.push(currentDay);saveDone(done);
+  // 把今天学的 6 句存入已学短语库
+  archiveToday();
   const el=document.getElementById('btn-checkin');
   if(el){el.textContent='✅ 今日已完成 · 明天继续加油！';el.className='btn-checkin done';el.disabled=true}
   toast('🎉 打卡成功！今天你练了 '+Math.floor(timerSec/60)+' 分钟，继续加油！');
+}
+function archiveToday(){
+  const learned=getLearned();
+  const wk=currentDay<7?'第1周·接待问候':currentDay<14?'第2周·商品材质':currentDay<21?'第3周·尺码试穿':'第4周·付款售后';
+  dayData.p.forEach(p=>{
+    // 去重
+    if(!learned.some(l=>l.en===p[0])) learned.push({en:p[0],zh:p[1],week:wk,day:currentDay+1});
+  });
+  saveLearned(learned);
 }
 
 // 标记某步完成 — 增量更新，不重绘全页
@@ -815,6 +828,23 @@ function renderAll(){
     });
     h+='</div>';
   });
+  // 已学短语库（每日打卡自动归档）
+  const learned=getLearned();
+  if(learned.length>0){
+    h+='<div class="sec-hd open" style="background:#fff3e0" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')"><span>📖 已学内容 ('+learned.length+'句)</span><span class="arr">▼</span></div>';
+    h+='<div class="sec-bd open">';
+    // 按周分组
+    const weeks=['第1周·接待问候','第2周·商品材质','第3周·尺码试穿','第4周·付款售后'];
+    weeks.forEach(w=>{
+      const items=learned.filter(l=>l.week===w);
+      if(!items.length) return;
+      h+='<div style="font-size:11px;color:#e67e22;font-weight:600;padding:6px 0 2px">'+w+' ('+items.length+'句)</div>';
+      items.forEach(p=>{
+        h+='<div class="pitem learned-item" onclick="speak(\''+p.en.replace(/'/g,"\\'")+'\')"><div class="pi-text"><div class="pi-en">'+p.en+'</div><div class="pi-zh">'+p.zh+' <span style="font-size:10px;color:#ccc">Day'+p.day+'</span></div></div><button class="btn-spk" onclick="event.stopPropagation();speak(\''+p.en.replace(/'/g,"\\'")+'\')">🔊</button></div>';
+      });
+    });
+    h+='</div>';
+  }
   document.getElementById('page-all').innerHTML=h;
 }
 function filterAll(){
