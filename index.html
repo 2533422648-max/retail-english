@@ -2,430 +2,624 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="英语学习">
+<meta name="apple-mobile-web-app-title" content="零售英语">
 <meta name="theme-color" content="#4A90D9">
-<title>零售导购英语 · 第1个月</title>
+<title>零售导购英语 · 1小时学习</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;color:#333;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,20px)}
-.app-header{background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;padding:16px;text-align:center;position:sticky;top:0;z-index:10}
-.app-header h1{font-size:20px;font-weight:600}
-.app-header p{font-size:12px;opacity:.85;margin-top:2px}
-.tabs{display:flex;background:#fff;position:sticky;top:72px;z-index:9;border-bottom:1px solid #e8e8e8;overflow-x:auto;-webkit-overflow-scrolling:touch}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#333;min-height:100vh;padding-bottom:80px}
+.app-header{background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;padding:14px 16px 10px;text-align:center;position:sticky;top:0;z-index:10}
+.app-header h1{font-size:18px;font-weight:600}
+.app-header p{font-size:11px;opacity:.8;margin-top:2px}
+.tabs{display:flex;background:#fff;position:sticky;top:62px;z-index:9;border-bottom:1px solid #e0e0e0;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:none;padding:10px 14px;font-size:13px;color:#888;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.tab{flex:1;min-width:0;padding:11px 8px;font-size:13px;color:#888;border:none;background:none;cursor:pointer;text-align:center;border-bottom:2px solid transparent;font-weight:500;white-space:nowrap}
 .tab.active{color:#4A90D9;border-bottom-color:#4A90D9}
-.tab.today-tab{font-weight:600}
-.tab.today-tab.active{color:#e67e22;border-bottom-color:#e67e22}
-.content{padding:12px 16px}
+.tab.study-tab{font-weight:700}
+.tab.study-tab.active{color:#e67e22;border-bottom-color:#e67e22}
+.content{padding:10px}
 .page{display:none}
 .page.active{display:block}
 
-.card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;transition:all .15s;cursor:pointer}
-.card:active{transform:scale(.98);background:#f8f9ff}
-.card-left{flex:1;min-width:0}
-.card-en{font-size:16px;color:#333;font-weight:500;margin-bottom:3px}
-.card-zh{font-size:13px;color:#999}
-.speak-icon{width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:10px;font-size:18px;transition:all .2s}
-.card:active .speak-icon{background:#4A90D9}
-.section-title{font-size:14px;font-weight:600;color:#666;padding:8px 0 4px}
+/* 学习进度卡片 */
+.pcard{background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.pday{font-size:30px;font-weight:800;color:#e67e22;text-align:center}
+.plabel{font-size:12px;color:#999;text-align:center;margin-top:2px}
+.pbar{height:6px;background:#eee;border-radius:3px;margin-top:10px;overflow:hidden}
+.pbarf{height:100%;background:linear-gradient(90deg,#e67e22,#f39c12);border-radius:3px;transition:width .4s}
+.pstats{display:flex;justify-content:space-around;margin-top:8px;font-size:11px;color:#999}
 
-.add-section{background:#fff;border-radius:12px;padding:16px;margin-top:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.add-section h3{font-size:15px;margin-bottom:10px}
-.add-section input{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:8px;outline:none}
-.add-section input:focus{border-color:#4A90D9}
-.btn-primary{display:block;width:100%;padding:12px;background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
-.btn-primary:active{opacity:.85}
+/* section headers */
+.sec{font-size:14px;font-weight:700;color:#555;padding:10px 4px 6px;display:flex;align-items:center;gap:6px}
+.sec .emoji{font-size:18px}
 
-.empty-hint{text-align:center;color:#bbb;padding:40px 0;font-size:14px}
-.delete-btn{background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
-.delete-btn:active{color:#e74c3c}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+/* phrase cards */
+.pcard.list{padding:0;overflow:hidden}
+.pitem{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.pitem:last-child{border-bottom:none}
+.pitem:active{background:#f5f7ff}
+.pitem .pi{flex:1;min-width:0}
+.pitem .en{font-size:15px;color:#333;font-weight:500}
+.pitem .zh{font-size:12px;color:#999;margin-top:2px}
+.btn-spk{width:34px;height:34px;border-radius:50%;background:#e8f0fe;border:none;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-left:8px;cursor:pointer}
+.btn-spk:active{background:#4A90D9;color:#fff}
+
+/* grammar box */
+.gbox{background:#fff7e6;border:1px solid #ffe0a0;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;margin-bottom:10px}
+.gbox .gt{font-weight:700;color:#e67e22;margin-bottom:4px}
+
+/* conversation box */
+.cbox{background:#f0f7ff;border:1px solid #c8ddf8;border-radius:10px;padding:10px 14px;margin-bottom:10px}
+.cbox .ct{font-weight:700;color:#4A90D9;margin-bottom:6px;font-size:13px}
+.cbox .cl{padding:4px 6px;border-radius:4px;cursor:pointer;font-size:14px;margin-bottom:2px}
+.cbox .cl:active{background:#e0ecff}
+.cbox .cen{color:#333}
+.cbox .czh{color:#888;font-size:12px;margin-top:1px}
+
+/* voice record */
+.voice-area{text-align:center;padding:16px 0}
+.btn-record{display:inline-block;padding:12px 32px;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-record:active{transform:scale(.95)}
+.btn-record.listening{background:linear-gradient(135deg,#27ae60,#2ecc71);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.4)}50%{box-shadow:0 0 0 12px rgba(46,204,113,0)}}
+.voice-result{margin-top:10px;font-size:13px;color:#666;min-height:20px}
+.voice-result .match{color:#27ae60;font-weight:600}
+.voice-result .miss{color:#e74c3c;text-decoration:line-through}
+
+/* quiz */
+.quiz-q{font-size:15px;color:#333;margin-bottom:10px;font-weight:500;line-height:1.5}
+.quiz-q .blank{display:inline-block;border-bottom:2px dashed #e67e22;min-width:60px;text-align:center;color:#e67e22;font-weight:700;margin:0 3px;padding:0 4px}
+.quiz-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.quiz-opt{padding:8px 18px;background:#fff;border:2px solid #ddd;border-radius:20px;font-size:14px;cursor:pointer;font-weight:500;transition:all .15s}
+.quiz-opt:active{transform:scale(.95)}
+.quiz-opt.correct{background:#d5f5e3;border-color:#27ae60;color:#27ae60}
+.quiz-opt.wrong{background:#fadbd8;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{font-size:13px;padding:4px 0;min-height:22px}
+
+/* review section */
+.ritem{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5}
+.ritem:last-child{border:none}
+.ritem .ri{flex:1;font-size:14px}
+.ritem .ri .en{color:#333;font-weight:500}
+.ritem .ri .zh{color:#999;font-size:12px}
+.ritem .ri .ago{color:#bbb;font-size:10px}
+.rbtns{display:flex;gap:6px;flex-shrink:0}
+.rbtn{padding:5px 10px;border-radius:12px;border:none;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+.rbtn.again{background:#ffe0e0;color:#c0392b}
+.rbtn.good{background:#d5f5e3;color:#27ae60}
+.rbtn.easy{background:#e8f0fe;color:#4A90D9}
+
+/* done button */
+.btn-done{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin-top:10px}
+.btn-done:active{background:#27ae60}
+.btn-done.done{background:#bbb;cursor:default}
+
+/* collection search */
+.search-box{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:10px;font-size:14px;margin-bottom:10px;outline:none;background:#fff}
+.search-box:focus{border-color:#4A90D9}
+
+/* add section */
+.add-box{background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.add-box h3{font-size:14px;margin-bottom:10px}
+.add-box input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:8px;outline:none}
+.add-box input:focus{border-color:#4A90D9}
+.add-box button{width:100%;padding:12px;background:#4A90D9;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+.add-box button:active{background:#357ABD}
+
+/* collapsible */
+.sec-col{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 4px}
+.sec-col .arr{font-size:11px;transition:transform .3s}
+.sec-col.open .arr{transform:rotate(180deg)}
+.col-body{display:none}
+.col-body.show{display:block}
+
+/* toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500;margin-right:4px}
-.tag-retail{background:#fff3e0;color:#e65100}
-.tag-daily{background:#e3f2fd;color:#1565c0}
-.tag-adv{background:#f3e5f5;color:#7b1fa2}
-
-.study-header{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center}
-.study-day{font-size:30px;font-weight:700;color:#e67e22}
-.study-label{font-size:13px;color:#999;margin-top:4px}
-.progress-bar{height:6px;background:#eee;border-radius:3px;margin:10px 0;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#e67e22,#f1c40f);border-radius:3px;transition:width .5s}
-.progress-text{font-size:12px;color:#999}
-
-.streak-box{display:flex;justify-content:center;gap:24px;margin-bottom:10px}
-.streak-item{text-align:center}
-.streak-num{font-size:24px;font-weight:700;color:#e67e22}
-.streak-label{font-size:11px;color:#999}
-
-.week-header{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:10px}
-.week-header .wk-title{font-size:14px;font-weight:600}
-.week-header .wk-sub{font-size:12px;opacity:.9;margin-top:2px}
-
-.conv-box{background:#fffef5;border:1px solid #ffe082;border-radius:10px;padding:12px;margin-bottom:10px}
-.conv-box .conv-title{font-size:13px;font-weight:600;color:#e67e22;margin-bottom:8px}
-.conv-box .conv-line{font-size:14px;padding:6px 8px;border-radius:6px;cursor:pointer;margin-bottom:2px}
-.conv-box .conv-line:active{background:#fff3cd}
-.conv-box .conv-en{color:#333;font-weight:500}
-.conv-box .conv-zh{color:#999;font-size:12px;margin-top:2px}
-
-.check-btn{display:block;width:100%;margin:12px 0;padding:12px;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
-.check-btn:active{opacity:.85}
-.check-btn.done{background:#bbb;cursor:default}
-
-.phrase-collection .section-header{cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0}
-.phrase-collection .section-header .arrow{font-size:12px;transition:.3s;color:#999}
-.phrase-collection .section-open .arrow{transform:rotate(180deg)}
-.phrase-collection .section-body{display:none}
-.phrase-collection .section-open .section-body{display:block}
-
-.month-divider{background:#f0f4ff;border-radius:10px;padding:10px 14px;margin:14px 0 8px;font-size:14px;font-weight:600;color:#4A90D9}
+/* tabs badge */
+.tab .badge{display:inline-block;background:#e74c3c;color:#fff;font-size:10px;border-radius:10px;padding:1px 6px;margin-left:3px;vertical-align:top}
 </style>
 </head>
 <body>
 
 <div class="app-header">
   <h1>零售导购英语</h1>
-  <p>第1个月 · 零售场景入门</p>
+  <p>每天1小时 · 学·说·练·测·复</p>
 </div>
 
 <div class="tabs" id="tabs">
-  <button class="tab today-tab active" data-page="study">📖 今日学习</button>
-  <button class="tab" data-page="phrases">📚 全部短句</button>
-  <button class="tab" data-page="custom">✏️ 我的短句</button>
+  <button class="tab study-tab active" data-tab="study">📖 今日学习</button>
+  <button class="tab" data-tab="all">📚 全部短语</button>
+  <button class="tab" data-tab="my">✏️ 我的短句</button>
 </div>
 
 <div class="content">
-  <div class="page active" id="study"></div>
-  <div class="page phrase-collection" id="phrases"></div>
-  <div class="page" id="custom"></div>
+  <div class="page active" id="page-study"></div>
+  <div class="page" id="page-all"></div>
+  <div class="page" id="page-my"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ 6个月课程体系 (24周, 每周7天, 共168天) ============
-// 格式: p=[英文,中文]; c=[[英文,中文],...]
-const CURR = [
-// 第1个月：零售英语基础 (Weeks 1-4)
-{w:'接待与问候',m:1, d:[
-  {n:'基本问候',p:[['Hello! How are you today?','你好！今天怎么样？'],['Good morning! Welcome to our store.','早上好！欢迎光临。'],['Nice to meet you. I am your shopping assistant.','很高兴见到您，我是您的导购。']],
-   c:[['Hello, welcome!','您好，欢迎光临！'],['Hi, thank you. This store is beautiful.','你好，谢谢。你们店真漂亮。'],['Thank you! Let me know if you need any help.','谢谢！有需要随时叫我。']]},
-  {n:'自我介绍与询问需求',p:[['How can I help you today?','今天有什么可以帮您的？'],['Are you looking for anything specific?','您在找什么特定的款式吗？'],['Is this your first time shopping with us?','您是第一次来我们家吗？']],
-   c:[['What brings you in today?','今天想找什么？'],['I am just looking around for now.','我先随便看看。'],['Sure! Take your time. I will be right here.','好的您慢慢看，我就在这边。']]},
-  {n:'欢迎回头客',p:[['Welcome back! So nice to see you again.','欢迎回来！很高兴又见到您。'],['How did you like the jacket you bought last time?','上次那件夹克穿得怎么样？'],['We just got some new arrivals you might like.','我们刚到了一批新款，您可能会喜欢。']],
-   c:[['Hey, you are back!','嘿，您又来啦！'],['Yes! I loved the dress I bought here.','对！上次买的裙子很喜欢。'],['That is great! Let me show you our new styles.','太好了！我带您看看新款。'],['Perfect, I would love that.','好呀，正想看呢。']]},
-  {n:'介绍店铺布局',p:[['The women\'s section is on this floor.','女装区在这一层。'],['Fitting rooms are in the back, to your right.','试衣间在后面右手边。'],['We also have shoes and accessories upstairs.','楼上还有鞋子和配饰。']],
-   c:[['Where is the fitting room?','试衣间在哪？'],['Right over there, in the corner.','就在那边角落里。'],['Can I take more than three items in?','可以拿三件以上进去吗？'],['Of course! Take as many as you like.','当然！随便拿。']]},
-  {n:'表达感谢',p:[['Thank you so much for your patience.','非常感谢您的耐心。'],['I really appreciate you coming in today.','真的很感谢您今天光临。'],['It was a pleasure helping you.','很高兴为您服务。']],
-   c:[['Thank you for your help today.','谢谢你今天的帮助。'],['My pleasure! Have a wonderful day!','不客气！祝您愉快！'],['You too! See you next time.','你也是！下次见。']]},
-  {n:'道别与邀请再来',p:[['Hope to see you again soon!','希望很快再见到您！'],['We have new arrivals every Friday.','我们每周五都有新款到。'],['Feel free to come back anytime.','随时欢迎再来。']],
-   c:[['I will definitely come back next week.','我下周肯定再来。'],['Great! I will save some new styles for you.','太好了！我给您留些新款。'],['You are so kind. Goodbye!','你真好。再见！']]},
-  {n:'第一周复习',p:[['Let me know if you have any questions.','有任何问题随时问我。'],['Would you like me to gift wrap this?','需要帮您包装成礼品吗？'],['Thank you for shopping with us!','感谢您在我们店购物！']],
-   c:[['I think that is everything I need.','我想要的就这些了。'],['Wonderful! Let me ring you up.','好的！我帮您结账。'],['Can I pay by card?','可以刷卡吗？'],['Yes, we accept all major cards.','可以的，主流银行卡都支持。']]}
+// ============================================================
+// 1个月(28天)课程：每天6句+语法+对话+测验
+// f=填空测验 q=题目 a=答案 o=选项
+// ============================================================
+const CURR=[
+{w:'接待与问候',m:1,d:[
+{n:'基本问候',g:'<b>How are you?</b> 是最常用问候语，回答用 I\'m fine/good/great。口语中也常说 <b>How\'s it going?</b>（最近怎么样），回答 <b>Pretty good!</b> 更地道。',
+ p:[['Hello! How are you today?','你好！今天怎么样？'],['Good morning! Welcome to our store.','早上好！欢迎光临。'],['How\'s it going?','最近怎么样？'],['Pretty good, thanks!','挺好的，谢谢！'],['It\'s great to see you!','见到您太好了！'],['Please come in and take a look.','请进来看看吧。']],
+ c:[['Hello, welcome!','您好，欢迎光临！'],['Hi, your store is so nice!','你好，你们店真漂亮！'],['Thank you! Feel free to look around.','谢谢！随便看看。']],
+ f:{q:'Hello! ___ are you today?',a:'How',o:['What','How','Where','Who']}},
+{n:'自我介绍',g:'介绍自己用 <b>I\'m...</b> 或 <b>My name is...</b>。提供帮助时说 <b>Let me know if...</b>（如果...请告诉我）。服务行业常用 <b>I\'ll be happy to...</b>（我很乐意...）。',
+ p:[['My name is Li, I\'ll be your assistant today.','我叫小李，今天由我为您服务。'],['Let me know if you need any help.','有任何需要请随时告诉我。'],['I\'m happy to help you find anything.','我很乐意帮您找任何东西。'],['Just give me a shout if you need me.','需要我就叫我一声。'],['I work here on weekdays.','我工作日都在。'],['It\'s my pleasure to serve you.','为您服务是我的荣幸。']],
+ c:[['Hi, I\'m Li. I\'ll help you today.','你好，我是小李，今天帮您。'],['Thanks. I\'m just looking around.','谢谢，我先看看。'],['Sure! Take your time.','好的，慢慢看。']],
+ f:{q:'My ___ is Li, I\'ll be your assistant.',a:'name',o:['age','job','name','home']}},
+{n:'询问顾客需求',g:'询问需求用 <b>Are you looking for...?</b> 或 <b>What brings you in?</b>（什么风把您吹来了）。<b>specific</b>=特定的，<b>particular</b>=特别的，都是导购常用词。',
+ p:[['Are you looking for something specific?','您在找什么特定的吗？'],['What brings you in today?','今天什么风把您吹来了？'],['Is this for yourself or a gift?','是给自己买还是送人？'],['What kind of style do you prefer?','您喜欢什么类型的风格？'],['Do you have a budget in mind?','有预算范围吗？'],['I can help you find the perfect piece.','我帮您找到最合适的。']],
+ c:[['What are you looking for today?','今天想找什么样的？'],['I\'m looking for a jacket.','我想找件外套。'],['Great! What color do you prefer?','好的！您喜欢什么颜色？']],
+ f:{q:'Are you looking for something ___?',a:'specific',o:['special','specific','interesting','expensive']}},
+{n:'表达感谢与道别',g:'<b>Thank you for...</b> 后接名词或动名词（-ing）。<b>Have a wonderful day!</b> 是美式英语中最常用的道别语。更随意可以说 <b>Take care!</b>（保重）。',
+ p:[['Thank you for coming today!','感谢您今天光临！'],['Have a wonderful day!','祝您愉快！'],['Hope to see you again soon!','希望很快再见到您！'],['Take care and stay safe!','保重身体！'],['Thanks for stopping by!','感谢顺路过来！'],['We really appreciate your visit.','非常感谢您的光临。']],
+ c:[['Thank you so much!','非常感谢！'],['You\'re welcome! See you next time!','不客气！下次见！'],['Bye! Have a good one!','拜拜！回见！']],
+ f:{q:'___ you for coming today!',a:'Thank',o:['Thanks','Thank','Please','Sorry']}},
+{n:'介绍店铺布局',g:'<b>There is/are...</b> 表示"有..."，是最常用的存在句。<b>upstairs</b>=楼上，<b>downstairs</b>=楼下。<b>section</b>=区域，<b>fitting room</b>=试衣间。',
+ p:[['Our store has two floors.','我们店有两层。'],['The women\'s section is upstairs.','女装区在楼上。'],['The fitting rooms are right over there.','试衣间就在那边。'],['The men\'s department is downstairs.','男装区在楼下。'],['The sale items are near the entrance.','特价商品在入口附近。'],['Restrooms are in the back corner.','洗手间在后面拐角。']],
+ c:[['Where is the fitting room?','试衣间在哪？'],['Right over there, in the corner.','就在那边角落。'],['How many items can I try on?','可以试几件？'],['As many as you like!','随便试！']],
+ f:{q:'The fitting rooms are right ___ there.',a:'over',o:['on','over','at','in']}},
+{n:'主动提供帮助',g:'<b>Would you like me to...?</b> 是委婉提供帮助的黄金句型。比 Can I 更礼貌。<b>Can I get you...?</b> 也很常用。回答接受说 <b>That would be great!</b>，拒绝说 <b>I\'m good, thanks.</b>',
+ p:[['Would you like me to show you around?','要我带您逛逛吗？'],['Can I get you a different size?','要给您换一个尺码吗？'],['Would you like to try this on?','要试穿这件吗？'],['Let me know if you want to see more options.','想看更多款式就告诉我。'],['I can hold these at the counter for you.','我帮您把这些放在柜台。'],['Shall I start a fitting room for you?','要帮您开一个试衣间吗？']],
+ c:[['Would you like me to grab another size?','要我拿另一个尺码吗？'],['Yes, that would be great!','好呀，太棒了！'],['I\'ll be right back!','马上回来！']],
+ f:{q:'___ you like to try this on?',a:'Would',o:['Do','Would','Are','Can']}},
+{n:'周复习：接待场景实战',g:'本周重点复习：问好(How are you)、介绍(I\'m...)、提问(Are you/Would you)、道别(Have a...)。注意语调——问句末尾上扬，陈述句平稳。',
+ p:[['Welcome back! It\'s so nice to see you again.','欢迎回来！很高兴又见到您。'],['How did you like the jacket from last time?','上次那件夹克穿得怎么样？'],['We just got some amazing new arrivals.','我们刚到了一些特别棒的新款。'],['I remember you liked blue, let me show you this.','我记得您喜欢蓝色，给您看看这件。'],['You have great taste, this is our best-seller.','您眼光真好，这是我们最畅销的。'],['I\'m here whenever you need me.','我随时都在，需要就叫我。']],
+ c:[['Hey, welcome back!','嘿，欢迎回来！'],['Hi! I loved the dress I bought here!','你好！上次买的裙子超喜欢！'],['That makes me so happy! New styles just arrived.','听到太开心了！新款刚到。'],['Show me everything!','都给我看看！']],
+ f:{q:'We just got some ___ new arrivals.',a:'amazing',o:['bad','amazing','small','old']}}
 ]},
-{w:'商品介绍与材质',m:1, d:[
-  {n:'服装品类',p:[['We have jackets, coats, sweaters, and hoodies.','我们有夹克、大衣、毛衣和卫衣。'],['This rack is all the new arrivals.','这个货架全是新款。'],['Dresses and skirts are over on that side.','连衣裙和半身裙在那边。']],
-   c:[['Where can I find casual shirts?','休闲衬衫在哪？'],['Right here. What color do you prefer?','这边。您喜欢什么颜色？'],['Something light, maybe white or blue.','浅色的，白色或蓝色吧。']]},
-  {n:'面料材质',p:[['This is 100% pure cotton, very breathable.','这是100%纯棉，非常透气。'],['It is a cotton-polyester blend, wrinkle-free.','这是棉涤混纺的，不易起皱。'],['The lining is silk, so it feels very smooth.','内衬是真丝的，手感很顺滑。']],
-   c:[['What material is this made of?','这是什么面料？'],['It is linen — perfect for summer.','亚麻的，夏天穿特别舒服。'],['Will it shrink after washing?','洗了会缩水吗？'],['No, it is pre-washed. Machine wash is fine.','不会，做过预缩处理，机洗没问题。']]},
-  {n:'颜色与图案',p:[['We have this in black, white, and navy blue.','这款有黑色、白色和深蓝色。'],['This floral print is very popular this season.','这个碎花图案这季非常流行。'],['Solid colors are more versatile for daily wear.','纯色更适合日常搭配。']],
-   c:[['Do you have this in a darker color?','这款有深一点的颜色吗？'],['Yes, we have it in dark gray too.','有的，还有深灰色的。'],['Can I see the dark gray one?','深灰的能给我看看吗？'],['Of course, let me grab it for you.','当然，我去帮您拿。']]},
-  {n:'款式风格',p:[['This is a casual style, great for everyday wear.','这是休闲款，很适合日常穿。'],['That one is more formal, good for the office.','那件偏正式，适合上班穿。'],['This slim-fit cut is very trendy right now.','这个修身版型现在很流行。']],
-   c:[['I need something for a business meeting.','我需要开会穿的衣服。'],['This blazer would be perfect for that.','这件西装外套就很合适。'],['It looks very professional.','看起来很干练。'],['It does! And it pairs well with jeans too.','是的！配牛仔裤也很好看。']]},
-  {n:'面料护理',p:[['This needs to be dry cleaned only.','这款只能干洗。'],['You can machine wash this in cold water.','这个可以冷水机洗。'],['Hang dry, do not put it in the dryer.','悬挂晾干，不要放烘干机。']],
-   c:[['How do I wash this sweater?','这件毛衣怎么洗？'],['Hand wash in cold water, lay flat to dry.','冷水手洗，平铺晾干。'],['That sounds easy enough.','听起来不算麻烦。'],['It is! And it will last for years if cared properly.','是的！保养得当可以穿好几年。']]},
-  {n:'推荐搭配',p:[['This top goes really well with those jeans.','这件上衣配那条牛仔裤很好看。'],['You can dress it up with heels or down with sneakers.','配高跟鞋正式，配运动鞋休闲。'],['A complete outfit from head to toe!','从头到脚一套完整搭配！']],
-   c:[['What would you pair this with?','这件你觉得怎么搭？'],['I would say a white tee and these ankle boots.','我会搭白T恤和这双短靴。'],['Oh, that sounds really nice!','听起来真不错！'],['Try it on and see how you feel!','试试看感觉怎么样！']]},
-  {n:'周复习：描述商品',p:[['This fabric is soft, lightweight, and durable.','这个面料柔软、轻薄还耐穿。'],['It comes in multiple colors and sizes.','有多种颜色和尺码可选。'],['Definitely one of our best quality items.','绝对是我们质量最好的款之一。']],
-   c:[['Why is this one more expensive?','为什么这件更贵？'],['The material is imported and the stitching is hand-done.','面料是进口的，缝线是手工的。'],['I can tell the difference now that you mention it.','你一说我确实看出差别了。']]}
+{w:'商品类型与材质',m:1,d:[
+{n:'服装类型',g:'<b>This/That/These/Those</b> 是指示代词。This(这个)和These(这些)指近处，That(那个)和Those(那些)指远处。介绍商品时说 <b>This is...</b> 最常用。',
+ p:[['We have jackets, coats, and sweaters over here.','这边有夹克、大衣和毛衣。'],['This section is all T-shirts and blouses.','这个区域都是T恤和衬衫。'],['Dresses are along the back wall.','连衣裙在后面那面墙。'],['Pants and jeans are on your left.','裤子和牛仔裤在您左边。'],['These are our classic styles.','这些是我们经典款。'],['Those over there are the new collection.','那边那些是新系列。']],
+ c:[['Where are the shirts?','衬衫在哪？'],['Right over here. Long-sleeve or short-sleeve?','这边。长袖还是短袖？'],['Short-sleeve, please.','短袖吧。']],
+ f:{q:'___ section is all T-shirts and blouses.',a:'This',o:['That','This','Those','These']}},
+{n:'面料材质(上)',g:'<b>It\'s made of...</b>（它是...做的）是描述材质的标准句型。<b>100% cotton</b>=纯棉，<b>silk</b>=真丝，<b>wool</b>=羊毛，<b>polyester</b>=涤纶，<b>linen</b>=亚麻。',
+ p:[['This is 100% pure cotton.','这是100%纯棉的。'],['It\'s made of high-quality silk.','这是优质真丝做的。'],['The fabric is a cotton-polyester blend.','面料是棉涤混纺。'],['This wool sweater is very warm.','这件羊毛衫非常暖和。'],['Linen is perfect for summer.','亚麻最适合夏天了。'],['This material is imported from Italy.','这个面料是意大利进口的。']],
+ c:[['What material is this?','什么面料？'],['It\'s pure cotton — very soft and breathable.','纯棉的，很柔软透气。'],['Will it shrink?','会缩水吗？'],['No, it\'s pre-shrunk.','不会，预缩处理过的。']],
+ f:{q:'It\'s made ___ high-quality silk.',a:'of',o:['in','of','by','from']}},
+{n:'面料特性(下)',g:'形容词描述面料手感。<b>soft</b>=柔软，<b>smooth</b>=顺滑，<b>stretchy</b>=有弹性，<b>breathable</b>=透气，<b>wrinkle-resistant</b>=防皱，<b>waterproof</b>=防水。',
+ p:[['This fabric feels very soft and smooth.','这个面料摸起来特别柔软顺滑。'],['It\'s stretchy, so it\'s very comfortable.','有弹性，所以穿着很舒服。'],['This material is wrinkle-resistant, easy to care for.','这个防皱，好打理。'],['The jacket is waterproof and windproof.','这件夹克防水防风。'],['It\'s breathable, great for hot weather.','很透气，天热穿正好。'],['The inner lining is super soft against the skin.','内衬贴着皮肤特别柔软。']],
+ c:[['How does this fabric feel?','这面料手感怎么样？'],['Very soft! And it\'s stretchy too.','很柔软！还有弹性。'],['That\'s perfect, I\'ll take it!','太好了，我买了！']],
+ f:{q:'This fabric feels very ___ and smooth.',a:'soft',o:['hard','rough','soft','heavy']}},
+{n:'颜色与款式',g:'描述颜色的顺序：深浅+颜色词。<b>light blue</b>=浅蓝，<b>dark red</b>=深红。<b>solid</b>=纯色，<b>patterned</b>=有花纹的，<b>striped</b>=条纹，<b>floral</b>=花色的。',
+ p:[['What color are you looking for?','您想要什么颜色？'],['We have this in four colors.','这款有四个颜色。'],['This navy blue is very popular.','这个藏蓝色非常受欢迎。'],['This floral pattern is trending this season.','这个花色这季很流行。'],['The solid black is more classic.','纯黑色更经典。'],['Would you like a brighter or darker color?','您想要亮一点还是暗一点的颜色？']],
+ c:[['Do you have this in red?','这件有红色的吗？'],['Yes, we have light red and dark red.','有的，浅红和深红都有。'],['Let me try the dark red.','我试深红的。']],
+ f:{q:'We have this ___ four colors.',a:'in',o:['with','in','at','for']}},
+{n:'品牌与产地',g:'<b>Where is it made?</b> 问产地。回答：<b>It\'s made in...</b>。<b>brand</b>=品牌，<b>designed in</b>=在哪里设计的，<b>manufactured in</b>=在哪里制造的。',
+ p:[['This brand is very well-known for quality.','这个品牌以品质著称。'],['It\'s designed in France, made in Italy.','法国设计，意大利制造。'],['We carry several international brands.','我们代理多个国际品牌。'],['This is a local brand, very popular here.','这是本地品牌，这里很受欢迎。'],['The craftsmanship is from Japan.','工艺来自日本。'],['Our store is an authorized retailer.','我们店是授权经销商。']],
+ c:[['Where is this brand from?','这个品牌是哪里的？'],['It\'s a French brand, very high quality.','法国品牌，品质很高。'],['I\'ve heard of them!','我听说过！']],
+ f:{q:'It\'s designed ___ France, made in Italy.',a:'in',o:['at','on','in','from']}},
+{n:'流行趋势表达',g:'<b>It\'s trending</b>=现在很流行。<b>this season</b>=这季，<b>in style</b>=时髦的，<b>timeless</b>=永不过时的。<b>Best-seller</b>=畅销款。',
+ p:[['This style is really trending right now.','这个款现在特别流行。'],['It\'s the hottest item this season.','这是这季最火的单品。'],['Minimalist style is very in right now.','极简风现在很时髦。'],['This classic design never goes out of style.','这个经典设计永不过时。'],['We sell out of this every week.','这款每周都卖断货。'],['Fashion bloggers are all wearing this.','时尚博主都在穿这个。']],
+ c:[['What\'s popular right now?','现在流行什么？'],['Minimalist and oversized are both in.','极简风和宽松风都在流行。'],['I love minimalist style!','我超爱极简风！']],
+ f:{q:'This style is really ___ right now.',a:'trending',o:['old','boring','trending','cheap']}},
+{n:'周复习：描述商品实战',g:'本周要点：指示代词(this/that/these/those)、材质(made of)、颜色词序(light/dark+颜色)、趋势(trending/in style)。练习时注意冠词 a/an 的用法。',
+ p:[['Based on what you like, I recommend this one.','根据您的喜好，我推荐这件。'],['The quality and design are both excellent.','品质和设计都非常好。'],['This goes well with almost anything in your closet.','这件跟你衣柜里什么都好搭。'],['Try pairing it with jeans for a casual look.','配牛仔裤就是休闲风。'],['This piece will last you for years.','这件能穿好多年。'],['I own one myself and I absolutely love it.','我自己也有一件，特别喜欢。']],
+ c:[['What do you recommend?','你推荐哪件？'],['This one! It\'s perfect for your style.','这件！跟你的风格绝配。'],['You\'re right, I\'ll try it on.','你说得对，我试试。']],
+ f:{q:'This goes well with almost ___ in your closet.',a:'anything',o:['nothing','anything','something','everything']}}
 ]},
-{w:'尺码、试穿与反馈',m:1, d:[
-  {n:'询问尺码',p:[['What size do you normally wear?','您平时穿什么码？'],['We carry sizes from XS to XXL.','我们有XS到XXL码。'],['Let me check if we have your size.','我帮您查一下有没有您的码。']],
-   c:[['Do you have this in medium?','这款有中号吗？'],['Let me check. Yes, here you go.','我看看。有的，给您。'],['Thanks! Where can I try it on?','谢谢！试衣间在哪？']]},
-  {n:'试穿引导',p:[['Would you like to try it on?','要试穿一下吗？'],['The fitting room is right this way.','试衣间这边请。'],['Take your time. I will wait right outside.','慢慢试，我在外面等您。']],
-   c:[['Can I try both of these?','这两件都能试吗？'],['Absolutely! I will hang them in the room for you.','当然！我帮您挂到试衣间里。'],['Thank you so much.','太感谢了。']]},
-  {n:'尺码不合适',p:[['This one runs a little small, try a size up.','这款偏小，试试大一码。'],['It is a bit loose. Would you like a smaller size?','有点松，要试试小一码吗？'],['The sleeves are too long for me.','袖子对我来说太长了。']],
-   c:[['This feels a bit tight in the shoulders.','肩这里有点紧。'],['Let me bring you a size large.','我给您换个大号。'],['Yes please, that might work better.','好的，大号可能更合适。']]},
-  {n:'赞美顾客',p:[['That looks amazing on you!','您穿这个太好看了！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。'],['It fits you like it was made for you.','太合身了，像量身定做的一样。']],
-   c:[['What do you think? Does it look okay?','你觉得怎么样？还行吗？'],['Are you kidding? It is perfect on you!','开什么玩笑？太完美了！'],['Really? I am not sure about the length.','真的吗？我不太确定长度。'],['The length is just right — it hits exactly at the right spot.','长度刚好，恰到好处。']]},
-  {n:'试穿反馈',p:[['How does it feel? Comfortable?','穿起来感觉怎么样？舒服吗？'],['Do you like the fit?','您觉得版型怎么样？'],['Walk around a bit, see how it moves.','走几步看看活动起来怎么样。']],
-   c:[['I love the fabric, but the color is not quite me.','面料很喜欢，但颜色不太适合我。'],['No problem! Let me show you the same style in blue.','没问题！这款还有蓝色的。'],['Blue would be much better!','蓝色就好多了！']]},
-  {n:'比较试穿',p:[['Which one do you prefer?','您更喜欢哪一件？'],['They both look great, but for different occasions.','两件都好看，适合不同场合。'],['Take a photo in the mirror if you want!','想的话可以对着镜子拍张照！']],
-   c:[['I cannot decide between these two.','这两件我选不出来。'],['The black one is more classic, the red is more bold.','黑色更经典，红色更大胆。'],['You are right. I will go with the classic black.','你说得对，我选经典的黑色。']]},
-  {n:'第三周复习',p:[['Always try things on — sizes vary by brand.','一定要试穿，不同品牌尺码不一样。'],['If it does not feel right, do not buy it.','穿起来不舒服就别买。'],['Comfort and confidence are equally important.','舒适和自信同样重要。']],
-   c:[['I think I will take all three items!','这三件我都要了！'],['Excellent choices! Let me help you to the counter.','选得太好了！我帮您拿到收银台。'],['You have been so helpful today.','你今天帮了太多忙了。'],['That is what I am here for!','这是我应该做的！']]}
+{w:'尺码、价格与付款',m:1,d:[
+{n:'询问与推荐尺码',g:'<b>What size do you wear?</b>（你穿什么码）。国外码：XS/S/M/L/XL。码偏小说 <b>runs small</b>，偏大说 <b>runs large</b>。<b>true to size</b>=标准码。',
+ p:[['What size do you usually wear?','您一般穿什么码？'],['We have all sizes from XS to XXL.','我们有XS到XXL所有码。'],['This style runs a bit small, I suggest sizing up.','这款偏小，建议拿大一码。'],['This one is true to size.','这款是标准码。'],['Let me grab a medium for you.','我帮您拿一件中号。'],['Do you want to try both sizes to compare?','要不要两个码都试试对比一下？']],
+ c:[['What size should I try?','我该试什么码？'],['You look like a medium to me. Let\'s try both M and L.','我觉得像中号。中号和大号都试试吧。'],['Good idea!','好主意！']],
+ f:{q:'This style ___ a bit small, I suggest sizing up.',a:'runs',o:['is','runs','goes','comes']}},
+{n:'试穿体验',g:'<b>How does it fit?</b>（穿起来合身吗）。回答：<b>It fits perfectly!</b>（太合身了）、<b>It\'s a bit tight/loose</b>（有点紧/松）。夸顾客穿得好看：<b>It looks amazing on you!</b>',
+ p:[['Would you like to try it on?','要试穿一下吗？'],['The fitting rooms are this way.','试衣间在这边。'],['How does it fit?','穿起来怎么样？'],['It looks absolutely amazing on you!','您穿上太好看啦！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。'],['It fits you like it was made for you!','太合身了，像量身定做的一样！']],
+ c:[['How does it look?','看起来怎么样？'],['Wow! It looks perfect on you!','哇！太适合你了！'],['Really? I do like how it feels.','真的吗？穿着确实挺舒服的。']],
+ f:{q:'How does it ___?',a:'fit',o:['look','feel','fit','size']}},
+{n:'询问价格',g:'<b>How much is this?</b>（这个多少钱）。美式口语说 <b>How much does it go for?</b>。<b>price tag</b>=价格标签，<b>on sale</b>=打折中，<b>full price</b>=原价。',
+ p:[['How much is this one?','这件多少钱？'],['It\'s 299 yuan.','这件299元。'],['The price tag is on the sleeve.','价格标签在袖子上。'],['Is this on sale?','这件打折吗？'],['It\'s already 30% off the original price.','已经打7折了。'],['Let me check the price for you.','我帮您查一下价格。']],
+ c:[['How much is this jacket?','这件夹克多少钱？'],['It\'s 459 yuan, and it\'s on sale — 20% off.','459元，现在打8折。'],['So about 367 yuan? Not bad!','那就是367左右？不错！']],
+ f:{q:'It\'s already 30% ___ the original price.',a:'off',o:['off','of','on','down']}},
+{n:'折扣与活动',g:'折扣表达：<b>20% off</b>=打八折，<b>half price</b>=半价。<b>buy one get one free</b>=买一送一。美式中 <b>30% off</b> 就是从原价减30%，等于打七折。',
+ p:[['We have a special promotion this week.','这周有特别活动。'],['Buy two, get one at half price.','买两件，第二件半价。'],['Members get an extra 10% off.','会员再享9折。'],['This item is 40% off today only.','这件今天限时打6折。'],['The more you buy, the more you save.','买得越多省得越多。'],['This offer ends this Sunday.','这个活动周日结束。']],
+ c:[['Any discounts?','有折扣吗？'],['Yes! These are 30% off, and members get extra 5%.','有！这些打7折，会员再享95折。'],['How do I become a member?','怎么成为会员？'],['Just scan this QR code, it\'s free!','扫这个码就行，免费的！']],
+ f:{q:'Buy two, get one at ___ price.',a:'half',o:['full','half','double','same']}},
+{n:'付款方式',g:'<b>We accept...</b>（我们接受...）。<b>cash</b>=现金，<b>card</b>=银行卡，<b>mobile payment</b>=手机支付，<b>scan the QR code</b>=扫码。<b>receipt</b>=小票。',
+ p:[['We accept cash, card, and WeChat Pay.','支持现金、刷卡和微信支付。'],['Your total is 368 yuan.','一共368元。'],['Would you like to scan or swipe?','扫码还是刷卡？'],['Please scan the QR code here.','请扫这里的二维码。'],['Do you need a paper receipt?','需要纸质小票吗？'],['Here\'s your receipt. Have a nice day!','这是您的小票，祝愉快！']],
+ c:[['That will be 368 yuan total.','一共368元。'],['Can I pay by WeChat?','可以微信支付吗？'],['Of course! Please scan here.','当然！扫这里。']],
+ f:{q:'We accept cash, card, and ___ Pay.',a:'WeChat',o:['Apple','WeChat','Cash','Credit']}},
+{n:'找零与退换政策',g:'<b>Here\'s your change</b>=找您的零钱。<b>return</b>=退货，<b>exchange</b>=换货。<b>within 30 days</b>=30天内。<b>keep the receipt</b>=保留小票。<b>final sale</b>=不退不换。',
+ p:[['Here\'s your change, 32 yuan.','找您32元。'],['You can return or exchange within 30 days.','30天内可以退换。'],['Just keep the receipt and the tags on.','保留小票和吊牌就行。'],['Sale items are final sale, no returns.','特价商品不退不换。'],['We also offer a 7-day price match.','我们还有7天保价。'],['If anything is wrong, just bring it back.','有任何问题拿回来就行。']],
+ c:[['What\'s your return policy?','退换政策是怎样的？'],['30 days with receipt. Tags must be attached.','30天内凭小票，吊牌不能剪。'],['That\'s fair. Thank you!','合理，谢谢！']],
+ f:{q:'You can return or exchange within ___ days.',a:'30',o:['7','15','30','60']}},
+{n:'周复习：尺码价格实战',g:'本周重点：尺码(runs small/true to size)、试穿(How does it fit)、价格(How much/on sale)、付款(accept/scan)、退换(return/exchange)。数字金额练熟 100-1000 的读法。',
+ p:[['Let me wrap these up nicely for you.','我帮您包好看点。'],['Would you like a gift box?','需要礼品盒吗？'],['Thank you for shopping with us today!','感谢您今天来购物！'],['I hope you enjoy your new clothes!','希望您喜欢新衣服！'],['We have a loyalty program — want to join?','我们有会员积分，要加入吗？'],['You\'ve saved 120 yuan today!','您今天省了120元！']],
+ c:[['Here\'s your bag and receipt.','您的袋子和收据。'],['Thanks! I\'ll definitely come back.','谢谢！我一定再来。'],['We look forward to seeing you!','期待下次见！']],
+ f:{q:'Thank you for ___ with us today!',a:'shopping',o:['buying','shopping','coming','staying']}}
 ]},
-{w:'价格、付款与售后',m:1, d:[
-  {n:'价格询问',p:[['How much is this one?','这件多少钱？'],['It is two hundred and ninety-nine yuan.','这件299元。'],['The price tag is on the inside label.','价格标签在内标上。']],
-   c:[['Is there a discount on this?','这件有折扣吗？'],['It is already 30% off, the original was 429.','已经打7折了，原价429。'],['Oh, that is a really good deal!','那确实很划算！']]},
-  {n:'优惠活动',p:[['We have a buy-one-get-one-half-off promotion.','我们有第二件半价活动。'],['If you spend over 500, you get 50 off.','满500减50。'],['Members get an extra 10% off.','会员额外享受9折。']],
-   c:[['Do I need a membership card for the discount?','会员卡才能打折吗？'],['You can sign up right now, it is free!','可以现在就办，免费的！'],['Okay, sign me up!','好，帮我办一张！']]},
-  {n:'付款方式',p:[['We accept cash, WeChat, Alipay, and bank cards.','我们可以收现金、微信、支付宝和银行卡。'],['Would you like to split the payment?','需要分开付吗？'],['Please scan the QR code here.','请扫这里的二维码。']],
-   c:[['Can I pay with Apple Pay?','能用Apple Pay吗？'],['Yes, just tap your phone here.','可以，在这里碰一下就行。'],['So convenient!','太方便了！']]},
-  {n:'打包与发票',p:[['Would you like a gift receipt?','需要礼品小票吗？'],['Shall I wrap it as a gift?','需要帮您包装成礼品吗？'],['Would you like a paper bag or just the item?','要纸袋还是就拿商品？']],
-   c:[['Can you gift wrap this one? It is a present.','这个能帮我包装吗？是送人的。'],['Of course! Let me make it look beautiful.','当然！我帮您包得漂漂亮亮的。'],['Thank you, that would be lovely.','谢谢，太好了。']]},
-  {n:'退换政策',p:[['You can return or exchange within 30 days.','30天内可以退换。'],['Please keep the receipt and tags attached.','请保留小票和吊牌。'],['Sale items are final sale, no returns.','特价商品不退不换。']],
-   c:[['What if it does not fit when I get home?','回家试了不合适怎么办？'],['No worries, just bring it back with the receipt.','没关系，带上小票拿回来就行。'],['Even if I already wore it?','穿过了也能退吗？'],['As long as the tags are still on and it is within 30 days.','只要吊牌还在、30天内就可以。']]},
-  {n:'处理投诉',p:[['I am so sorry about the inconvenience.','给您带来不便非常抱歉。'],['Let me fix this for you right away.','我马上帮您解决。'],['Would you like a refund or an exchange?','您要退款还是换货？']],
-   c:[['There is a small stain on this shirt.','这件衬衫上有个小污渍。'],['Oh no, let me get you a brand new one.','哎呀，我给您拿件全新的。'],['Thank you for handling it so quickly.','谢谢处理得这么快。']]},
-  {n:'第四周复习',p:[['Your total comes to 568 yuan.','您一共消费568元。'],['Here is your change and receipt.','这是找您的钱和小票。'],['Thank you for your purchase! Come back soon!','感谢惠顾！下次再来！']],
-   c:[['I had a great shopping experience today.','今天购物体验太好了。'],['That means a lot to me! Have a wonderful evening.','听到这话我太开心了！祝您今晚愉快。'],['I will definitely recommend this store to friends.','我一定推荐朋友来。']]}
-]},
-
-// 课程只加载第1个月，后续月份按需扩展
+{w:'日常交流延伸',m:1,d:[
+{n:'天气寒暄',g:'<b>Small talk</b>（寒暄）是英语社交的重要部分。聊天气最安全：<b>It\'s a beautiful day!</b>（天气真好）。<b>How\'s the weather?</b>（天气怎么样）。用 <b>It\'s + 形容词</b> 描述天气。',
+ p:[['It\'s a beautiful day today!','今天天气真好！'],['It\'s been so hot lately, hasn\'t it?','最近好热，是吧？'],['I hope it doesn\'t rain this weekend.','希望周末别下雨。'],['The weather is perfect for shopping!','这种天气最适合逛街了！'],['It\'s getting cooler in the evening.','傍晚开始变凉了。'],['Spring is my favorite season.','春天是我最喜欢的季节。']],
+ c:[['Nice weather today, isn\'t it?','今天天气真好，是吧？'],['Yes! Perfect for going out.','是啊！特别适合出门。'],['Are you doing anything fun later?','等会儿有什么好玩的安排吗？']],
+ f:{q:'It\'s a ___ day today!',a:'beautiful',o:['rainy','beautiful','terrible','cloudy']}},
+{n:'周末与休闲',g:'<b>What do you do on weekends?</b>（你周末做什么）。<b>hang out</b>=出去玩/逛街，<b>chill at home</b>=宅在家，<b>catch up on sleep</b>=补觉。回答用 <b>I usually...</b>。',
+ p:[['What do you usually do on weekends?','你周末一般做什么？'],['I like to hang out with friends.','我喜欢和朋友出去玩。'],['Sometimes I just chill at home and watch movies.','有时候就宅在家看电影。'],['Do you have any hobbies?','你有什么爱好吗？'],['I enjoy cooking and trying new restaurants.','我喜欢做饭和探新店。'],['That sounds like a lot of fun!','听起来很有意思！']],
+ c:[['Any plans for the weekend?','周末有什么计划吗？'],['Not really, just going to relax.','没什么，就放松放松。'],['Same here! We all need a break.','我也是！大家都需要休息。']],
+ f:{q:'I like to hang ___ with friends.',a:'out',o:['in','out','up','down']}},
+{n:'家庭与朋友',g:'<b>How\'s your family?</b>（家里人都好吗）是常用问候。<b>Do you have any siblings?</b>=你有兄弟姐妹吗。<b>only child</b>=独生子女。<b>get along with</b>=和...相处得好。',
+ p:[['How is your family doing?','家里人都好吗？'],['They\'re doing great, thanks for asking!','都挺好的，谢谢关心！'],['Do you have any brothers or sisters?','你有兄弟姐妹吗？'],['I have one older sister.','我有一个姐姐。'],['My parents live in the same city.','我爸妈住在同一个城市。'],['Family is everything to me.','家人对我来说最重要。']],
+ c:[['Do you have kids?','你有孩子吗？'],['Yes, a five-year-old daughter.','有个五岁的女儿。'],['She must be adorable!','一定很可爱吧！']],
+ f:{q:'How is your family ___?',a:'doing',o:['going','doing','being','making']}},
+{n:'美食与餐厅',g:'<b>tasty</b>=好吃（比delicious更口语化），<b>yummy</b>=好吃（偏可爱），<b>spicy</b>=辣。<b>recommend</b>=推荐。<b>I\'m a big fan of...</b>=我超喜欢...',
+ p:[['Have you tried any good restaurants lately?','最近有吃什么好的餐厅吗？'],['I know a great hotpot place nearby.','我知道附近一家很棒的火锅店。'],['The food there is absolutely delicious.','那里的菜特别好吃。'],['I\'m a big fan of spicy food.','我超爱吃辣的。'],['Can you handle very spicy food?','你能吃很辣的吗？'],['Let me recommend my favorite dish.','我来推荐我最爱的菜。']],
+ c:[['Know any good places to eat around here?','这附近有什么好吃的吗？'],['There\'s an amazing noodle shop two blocks away.','隔两条街有家超棒的面馆。'],['I\'ll check it out, thanks!','我去试试，谢了！']],
+ f:{q:'The food there is ___ delicious.',a:'absolutely',o:['absolutely','very','a bit','not']}},
+{n:'出行与交通',g:'<b>How do you get here?</b>（你怎么来的）。<b>take the subway</b>=坐地铁，<b>drive</b>=开车，<b>walk</b>=走路。<b>It takes about...</b>=大概花...时间。<b>convenient</b>=方便的。',
+ p:[['How do you usually get here?','你一般怎么过来？'],['I take the subway, it\'s super convenient.','我坐地铁，超方便。'],['It takes about 20 minutes by bus.','坐公交大概20分钟。'],['The traffic can be really bad during rush hour.','高峰期交通很堵。'],['Is there parking nearby?','附近能停车吗？'],['There\'s a parking lot right behind the store.','店后面就有停车场。']],
+ c:[['Did you drive here?','你开车来的吗？'],['No, I took the subway. Much faster.','没有，坐地铁。快多了。'],['Smart choice! Driving is a nightmare at this hour.','明智！这个点开车是噩梦。']],
+ f:{q:'I take the subway, it\'s ___ convenient.',a:'super',o:['not','super','a little','barely']}},
+{n:'表达感受与情绪',g:'<b>I feel...</b>（我感觉...）是最直接的表达方式。<b>excited</b>=兴奋，<b>tired</b>=累，<b>stressed</b>=压力大，<b>grateful</b>=感恩。<b>It makes me...</b>=它让我...',
+ p:[['I feel really happy today!','我今天特别开心！'],['Shopping always puts me in a good mood.','逛街总能让我心情好。'],['I\'m a bit tired after a long day.','忙了一天有点累了。'],['Treat yourself — you deserve it!','犒劳一下自己，你值得！'],['Retail therapy is real, isn\'t it?','购物疗法是真的吧？'],['Seeing customers happy makes my day.','看到顾客开心我就满足了。']],
+ c:[['You look happy today!','你今天看起来很开心！'],['I am! I just got a promotion!','是啊！我刚升职了！'],['Congratulations! That\'s amazing!','恭喜！太棒了！'],['Treat yourself — you earned it!','犒劳自己——你应得的！']],
+ f:{q:'Shopping always puts me in a good ___.',a:'mood',o:['mood','day','time','shop']}},
+{n:'月度总结：综合实战',g:'本月你学了：问候、介绍商品、材质颜色、尺码试穿、价格付款、日常寒暄。核心句型：<b>How can I help you? / It\'s made of... / How does it fit? / How much is...?</b> 尝试不看中文直接朗读。',
+ p:[['You\'ve made great progress this month!','这个月进步很大！'],['I can now help customers in English.','我现在能用英语帮顾客了。'],['Practice makes perfect — keep it up!','熟能生巧，继续加油！'],['Don\'t be afraid to make mistakes.','别怕犯错。'],['Every conversation makes you better.','每次对话都让你进步。'],['I\'m proud of how far you\'ve come.','为你走到这里而骄傲。']],
+ c:[['How do you feel about your English now?','你现在英语感觉怎么样？'],['Much more confident! I can actually talk!','自信多了！真的能聊了！'],['That\'s what I love to hear. Keep going!','就爱听这个。继续前进！']],
+ f:{q:'Practice makes ___ — keep it up!',a:'perfect',o:['perfect','tired','easy','hard']}}
+]}
 ];
-// ============ 原有零售短句合集（扩展版）============
-const PHRASES = {
-'接待问候':[['Hello! Welcome to our store.','您好！欢迎光临。'],['How can I help you today?','今天有什么可以帮您的？'],['Are you looking for anything specific?','您在找什么特定的款式吗？'],['Feel free to look around.','请随便看看。'],['Let me know if you need any help.','有需要随时叫我。'],['This way, please.','这边请。'],['Please take your time.','不着急慢慢看。'],['Is this your first time here?','第一次来我们家吗？']],
-'商品介绍':[['This is one of our best-sellers.','这是我们销量最好的款之一。'],['It is very popular this season.','这季非常流行。'],['The quality is absolutely excellent.','质量非常好。'],['It goes well with almost anything.','这件很百搭。'],['Would you like to try the other color?','要试试另一个颜色吗？'],['This is 100% pure cotton.','这是100%纯棉。'],['The fabric is soft, lightweight, and durable.','面料柔软轻薄还耐穿。']],
-'尺码与试穿':[['What size are you looking for?','您找什么尺码？'],['We have sizes from XS to XXL.','我们有XS到XXL码。'],['This runs a bit small. Take a size up.','这款偏小，换大一码。'],['Would you like to try it on?','要试穿一下吗？'],['The fitting room is over there.','试衣间在那边。'],['How does it fit? Comfortable?','穿起来怎么样？舒服吗？'],['It looks absolutely amazing on you!','您穿上太好看了！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。']],
-'价格与付款':[['We accept cash, card, and mobile payment.','支持现金、刷卡和手机支付。'],['Would you like a receipt?','需要小票吗？'],['Please scan the QR code to pay.','请扫码支付。'],['Your total is 299 yuan.','一共299元。'],['Here is your change and receipt.','找您的钱和小票。'],['We have a buy-one-get-one-half-off deal.','有第二件半价活动。'],['Members get an extra 10% off.','会员额外9折。'],['You can return or exchange within 30 days.','30天内可退换。']],
-'库存与售后':[['Let me check if we have it in stock.','我帮您查一下库存。'],['Yes, we have this in stock.','这件还有货。'],['Sorry, this one is out of stock.','不好意思这件没货了。'],['We can order it for you.','我们可以帮您订。'],['A new shipment will arrive next week.','下周有新货到。'],['This is the last one.','这是最后一件了。'],['I can reserve it in your size.','可以帮您预留您的码。'],['Sale items are final sale, cannot be returned.','特价商品不退不换。']],
-'日常寒暄':[['How is your day going?','今天过得怎么样？'],['Did you have a good weekend?','周末过得好吗？'],['How have you been lately?','最近怎么样？'],['What do you like to do in your free time?','空闲时间喜欢做什么？'],['Have you seen any good movies lately?','最近看了什么好电影吗？'],['It is such a beautiful day today!','今天天气真好！'],['Looks like it might rain later.','看起来待会可能要下雨。'],['I tried a new restaurant and it was amazing.','试了一家新餐厅太棒了。']],
-'社交交流':[['It was really nice chatting with you!','和你聊天真开心！'],['We should grab coffee sometime.','改天一起喝咖啡吧。'],['I had a great time talking to you.','和你聊得很愉快。'],['Keep in touch!','保持联系！'],['Take care of yourself.','照顾好自己。'],['Let me know if you need anything.','需要什么随时说。'],['I am here for you.','我支持你。'],['You have got this! I believe in you.','你能行的！我相信你。']]
+
+// ============ 短语合集 ============
+const PHRASES={
+'接待问候':[['Hello! Welcome to our store.','您好！欢迎光临。'],['How can I help you today?','今天有什么可以帮您的？'],['Are you looking for anything specific?','您在找什么特定的吗？'],['Feel free to look around.','请随便看看。'],['Let me know if you need any help.','有需要随时叫我。'],['This way, please.','这边请。'],['Please take your time.','不着急慢慢看。'],['Is this your first time here?','第一次来吗？']],
+'商品介绍':[['This is one of our best-sellers.','这是我们畅销款之一。'],['It\'s very popular this season.','这季非常流行。'],['The quality is absolutely excellent.','质量非常好。'],['It goes well with almost anything.','这件很百搭。'],['This is 100% pure cotton.','这是100%纯棉。'],['The fabric is soft, lightweight, and durable.','面料柔软轻薄还耐穿。']],
+'尺码与试穿':[['What size are you looking for?','您找什么尺码？'],['This runs a bit small. Take a size up.','这款偏小，换大一码。'],['How does it fit?','穿起来怎么样？'],['It looks absolutely amazing on you!','您穿上太好看了！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。']],
+'价格与付款':[['We accept cash, card, and mobile payment.','支持现金刷卡和手机支付。'],['Your total is 299 yuan.','一共299元。'],['Here is your change and receipt.','找您的钱和小票。'],['Members get an extra 10% off.','会员额外9折。'],['You can return or exchange within 30 days.','30天内可退换。']],
+'库存与售后':[['Let me check if we have it in stock.','我帮您查库存。'],['Sorry, this one is out of stock.','不好意思这件没货了。'],['We can order it for you.','可以帮您订。'],['A new shipment arrives next week.','下周新货到。'],['This is the last one.','最后一件。']],
+'日常寒暄':[['How\'s your day going?','今天过得怎么样？'],['The weather is lovely today!','今天天气真好！'],['Any plans for the weekend?','周末有什么计划？'],['Take care and have a good one!','保重，回见！'],['Nice chatting with you!','和你聊天很开心！']]
 };
 
-// ============ 工具函数 ============
-function speak(text){
-  if(!('speechSynthesis' in window)){showToast('浏览器不支持语音朗读');return}
-  speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang='en-US'; u.rate=0.85; u.pitch=1
-  speechSynthesis.speak(u)
+// ============================================================
+// 全局状态
+// ============================================================
+const LS={done:'study_done_1h',streak:'study_streak_1h',review:'review_data_1h',my:'my_phrases_1h'};
+let studyDone=false, currentDay=0, quizAnswered=false, quizCorrect=0, reviewItems=[], isRecording=false, recognition=null;
+
+function getTodayIndex(){const s=new Date('2026-07-13'),t=new Date(),d=Math.floor((t-s)/86400000);return Math.max(0,Math.min(d,27))}
+
+function getDone(){try{return JSON.parse(localStorage.getItem(LS.done)||'[]')}catch(e){return[]}}
+function saveDone(v){localStorage.setItem(LS.done,JSON.stringify(v))}
+function getMy(){try{return JSON.parse(localStorage.getItem(LS.my)||'[]')}catch(e){return[]}}
+function saveMy(v){localStorage.setItem(LS.my,JSON.stringify(v))}
+function getReview(){try{return JSON.parse(localStorage.getItem(LS.review)||'{}')}catch(e){return{}}}
+function saveReview(v){localStorage.setItem(LS.review,JSON.stringify(v))}
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+function speak(text){const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=0.85;speechSynthesis.cancel();speechSynthesis.speak(u)}
+
+// ============================================================
+// 间隔复习系统
+// ============================================================
+const intervals=[1,3,7,14,30];
+function getReviewDue(){
+  const data=getReview(),today=new Date().toISOString().slice(0,10),due=[];
+  for(const[key,val]of Object.entries(data)){
+    if(val.nextReview<=today) due.push({key,...val});
+  }
+  return due.slice(0,10);
+}
+function reviewAction(key,grade){
+  const data=getReview();
+  if(!data[key]) return;
+  const entry=data[key],idx=Math.min((entry.reviewCount||0),intervals.length-1);
+  if(grade==='easy'){entry.interval=intervals[Math.min(idx+2,intervals.length-1)];entry.reviewCount=(entry.reviewCount||0)+2}
+  else if(grade==='good'){entry.interval=intervals[idx];entry.reviewCount=(entry.reviewCount||0)+1}
+  else{entry.interval=1;entry.reviewCount=Math.max(0,(entry.reviewCount||0)-2)}
+  const next=new Date();next.setDate(next.getDate()+entry.interval);
+  entry.nextReview=next.toISOString().slice(0,10);entry.lastReview=new Date().toISOString().slice(0,10);
+  data[key]=entry;saveReview(data);
+}
+function initReviewForDay(dayIdx){
+  const data=getReview(),today=new Date(),r={};
+  const day=CURR.find(w=>dayIdx>=w.d.reduce((s,d)=>s+1,0) || true);
+  let acc=0,found=null;
+  for(const w of CURR){
+    for(let i=0;i<w.d.length;i++){
+      if(acc===dayIdx){found=w.d[i];break}
+      acc++;
+    }
+    if(found) break;
+  }
+  if(!found) return;
+  found.p.forEach((p,i)=>{
+    const key=`d${dayIdx}_p${i}`;
+    if(!data[key]){
+      const next=new Date();next.setDate(next.getDate()+1);
+      r[key]={en:p[0],zh:p[1],lastReview:'',nextReview:next.toISOString().slice(0,10),interval:1,reviewCount:0};
+    }
+  });
+  if(Object.keys(r).length>0){Object.assign(data,r);saveReview(data)}
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast')
-  t.textContent=msg; t.classList.add('show')
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800)
-}
-
-// ============ Tab切换 ============
-document.getElementById('tabs').addEventListener('click',function(e){
-  if(!e.target.classList.contains('tab'))return
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-  e.target.classList.add('active')
-  const p=e.target.getAttribute('data-page')
-  document.querySelectorAll('.page').forEach(g=>g.classList.remove('active'))
-  document.getElementById(p).classList.add('active')
-  if(p==='study')renderStudy()
-  else if(p==='custom')renderCustom()
-})
-
-// ============ 今日学习 ============
-function getProgress(){
-  return JSON.parse(localStorage.getItem('studyProgress')||'{"done":{},"streak":0,"lastDate":"","totalDone":0}')
-}
-function saveProgress(p){localStorage.setItem('studyProgress',JSON.stringify(p))}
-
-function getTodayIndex(){
-  const start=new Date('2026-07-13')
-  const today=new Date()
-  today.setHours(0,0,0,0)
-  const days=Math.floor((today-start)/(1000*60*60*24))
-  return Math.max(0,Math.min(days,27))
-}
-
+// ============================================================
+// 渲染今日学习
+// ============================================================
 function renderStudy(){
-  const d=document.getElementById('study')
-  const idx=getTodayIndex()
-  const prog=getProgress()
-  const totalDays=28
-
-  // 计算周和天
-  let weekIdx=0, dayIdx=idx, remaining=idx
-  while(remaining>=7){remaining-=7; weekIdx++}
-  dayIdx=remaining
-  if(weekIdx>=CURR.length)weekIdx=CURR.length-1
-  const week=CURR[weekIdx]
-  if(dayIdx>=week.d.length)dayIdx=week.d.length-1
-  const day=week.d[dayIdx]
-
-  // 连续打卡
-  const todayStr=new Date().toISOString().slice(0,10)
-  const yesterdayStr=new Date(Date.now()-86400000).toISOString().slice(0,10)
-  if(prog.lastDate===yesterdayStr && !prog.done[idx]){
-    prog.streak++
-  }else if(prog.lastDate!==yesterdayStr && prog.lastDate!==todayStr && !prog.done[idx]){
-    prog.streak=0
+  currentDay=getTodayIndex();
+  let acc=0,weekData=null,dayData=null;
+  for(const w of CURR){
+    for(let i=0;i<w.d.length;i++){
+      if(acc===currentDay){weekData=w;dayData=w.d[i];break}
+      acc++;
+    }
+    if(dayData) break;
   }
-  prog.lastDate=todayStr
-  saveProgress(prog)
+  if(!dayData) return;
 
-  const isDone=prog.done[idx]
-  const doneCount=Object.keys(prog.done).length
-  const progressPct=Math.round(doneCount/totalDays*100)
+  const doneDays=getDone();
+  studyDone=doneDays.includes(currentDay);
+  const streak=calcStreak(doneDays);
+  const progress=Math.round((doneDays.length/28)*100);
+  quizAnswered=false; quizCorrect=0;
 
-  // 确定标签
-  let tagHTML=''
-  if(week.m<=2)tagHTML='<span class="tag tag-retail">零售场景</span>'
-  else if(week.m<=4)tagHTML='<span class="tag tag-daily">日常对话</span>'
-  else tagHTML='<span class="tag tag-adv">进阶表达</span>'
+  // 初始化今日复习记录
+  initReviewForDay(currentDay);
+  reviewItems=getReviewDue();
 
-  d.innerHTML=`
-    <div class="study-header">
-      <div class="study-day">第 ${idx+1} 天</div>
-      <div class="study-label">${week.m}月 · ${week.w} · ${day.n}</div>
-      ${tagHTML}
-      <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
-      <div class="progress-text">总进度 ${doneCount}/${totalDays} (${progressPct}%)</div>
-    </div>
+  let h='<div class="pcard"><div class="pday">Day '+(currentDay+1)+'</div>';
+  h+='<div class="plabel">'+weekData.w+' · '+dayData.n+'</div>';
+  h+='<div class="pbar"><div class="pbarf" style="width:'+progress+'%"></div></div>';
+  h+='<div class="pstats"><span>📅 '+doneDays.length+'/28 天</span><span>🔥 连续 '+streak+' 天</span><span>🔄 '+reviewItems.length+' 待复习</span></div></div>';
 
-    <div class="streak-box">
-      <div class="streak-item"><div class="streak-num">🔥 ${prog.streak}</div><div class="streak-label">连续打卡</div></div>
-      <div class="streak-item"><div class="streak-num">⭐ ${doneCount}</div><div class="streak-label">累计完成</div></div>
-    </div>
+  // 新短语
+  h+='<div class="sec"><span class="emoji">📖</span> 今日新内容（6句）</div><div class="pcard list">';
+  dayData.p.forEach((p,i)=>{
+    h+='<div class="pitem" onclick="speak(\''+p[0].replace(/'/g,"\\'")+'\')"><div class="pi"><div class="en">'+p[0]+'</div><div class="zh">'+p[1]+'</div></div><button class="btn-spk" onclick="event.stopPropagation();speak(\''+p[0].replace(/'/g,"\\'")+'\')">🔊</button></div>';
+  });
+  h+='</div>';
 
-    <div class="week-header">
-      <div class="wk-title">第${weekIdx+1}周 · ${week.w}</div>
-      <div class="wk-sub">第${week.m}个月 | 每日3句 + 1个场景对话</div>
-    </div>
+  // 语法小课堂
+  h+='<div class="sec"><span class="emoji">📝</span> 语法小课堂</div>';
+  h+='<div class="gbox"><div class="gt">💡 今日语法</div>'+dayData.g+'</div>';
 
-    <div class="section-title">📝 今日新短句</div>
-    ${day.p.map(item=>`
-      <div class="card" onclick="speak('${item[0].replace(/'/g,"\\'")}')">
-        <div class="card-left"><div class="card-en">${item[0]}</div><div class="card-zh">${item[1]}</div></div>
-        <div class="speak-icon">🔊</div>
-      </div>
-    `).join('')}
+  // 场景对话
+  h+='<div class="sec"><span class="emoji">💬</span> 场景对话</div><div class="cbox"><div class="ct">🎧 点击英文收听（角色扮演）</div>';
+  dayData.c.forEach((l,i)=>{
+    const speaker=i%2===0?'🅰':'🅱';
+    h+='<div class="cl" onclick="speak(\''+l[0].replace(/'/g,"\\'")+'\')"><div class="cen">'+speaker+' '+l[0]+'</div><div class="czh">'+l[1]+'</div></div>';
+  });
+  h+='</div>';
 
-    ${day.c?`
-    <div class="conv-box">
-      <div class="conv-title">💬 场景对话</div>
-      ${day.c.map(line=>`
-        <div class="conv-line" onclick="speak('${line[0].replace(/'/g,"\\'")}')">
-          <div class="conv-en">${line[0]}</div>
-          <div class="conv-zh">${line[1]}</div>
-        </div>
-      `).join('')}
-    </div>
-    `:''}
+  // 跟读练习
+  h+='<div class="sec"><span class="emoji">🗣️</span> 跟读练习</div><div class="pcard"><div style="font-size:13px;color:#666;margin-bottom:8px">选一句今天学的短语，点击录音按钮大声跟读。系统会帮你对比发音。</div>';
+  h+='<div id="voice-target" style="font-size:16px;font-weight:600;color:#4A90D9;text-align:center;padding:8px;background:#f0f7ff;border-radius:8px;margin-bottom:10px">'+dayData.p[0][0]+'</div>';
+  h+='<div class="voice-area"><button class="btn-record" id="btn-record" onclick="toggleRecord()">🎤 开始跟读</button></div>';
+  h+='<div class="voice-result" id="voice-result"></div>';
+  h+='<button style="display:block;width:100%;padding:8px;background:#f0f0f0;border:none;border-radius:6px;font-size:12px;margin-top:6px;cursor:pointer" onclick="nextVoiceTarget()">换一句跟读 →</button></div>';
 
-    <button class="check-btn${isDone?' done':''}" id="checkBtn" ${isDone?'disabled':''}>
-      ${isDone?'✅ 今日已完成':'✅ 打卡完成今日学习'}
-    </button>
-  `
-
-  if(!isDone){
-    document.getElementById('checkBtn').addEventListener('click',function(){
-      const p=getProgress()
-      p.done[idx]=true
-      p.totalDone=(p.totalDone||0)+1
-      if(!p.streakDate||p.streakDate!==todayStr){
-        if(p.streakDate===yesterdayStr)p.streak++
-        else p.streak=1
-        p.streakDate=todayStr
-      }
-      saveProgress(p)
-      renderStudy()
-      showToast('🎉 打卡成功！继续加油！')
-    })
+  // 小测验
+  if(dayData.f){
+    h+='<div class="sec"><span class="emoji">✍️</span> 小测验</div><div class="pcard"><div class="quiz-q">'+dayData.f.q.replace('___','<span class="blank">???</span>')+'</div>';
+    h+='<div class="quiz-opts" id="quiz-opts">';
+    const opts=shuffle([...dayData.f.o]);
+    opts.forEach(o=>{h+='<button class="quiz-opt" onclick="checkQuiz(\''+o.replace(/'/g,"\\'")+'\',\''+dayData.f.a.replace(/'/g,"\\'")+'\')">'+o+'</button>'});
+    h+='</div><div class="quiz-fb" id="quiz-fb"></div></div>';
   }
+
+  // 智能复习
+  if(reviewItems.length>0){
+    h+='<div class="sec"><span class="emoji">🔄</span> 今日复习（'+reviewItems.length+'句待巩固）</div><div class="pcard">';
+    reviewItems.forEach((item,i)=>{
+      const ago=item.lastReview?daysAgo(item.lastReview):'新';
+      h+='<div class="ritem"><div class="ri" onclick="speak(\''+item.en.replace(/'/g,"\\'")+'\')"><div class="en">'+item.en+'</div><div class="zh">'+item.zh+'</div><div class="ago">上次复习：'+(typeof ago==='number'?ago+'天前':ago)+'</div></div><div class="rbtns"><button class="rbtn again" onclick="handleReview(\''+item.key+'\',\'again\',this)">再练</button><button class="rbtn good" onclick="handleReview(\''+item.key+'\',\'good\',this)">掌握</button><button class="rbtn easy" onclick="handleReview(\''+item.key+'\',\'easy\',this)">简单</button></div></div>';
+    });
+    h+='</div>';
+  }
+
+  // 完成按钮
+  h+='<div style="text-align:center;padding:8px 0;font-size:12px;color:#aaa">✅ 学完新内容、做完测验、复习完成 → 打卡</div>';
+  h+='<button class="btn-done'+(studyDone?' done':'')+'" id="btn-done" onclick="finishDay()"'+(studyDone?' disabled':'')+'>'+(studyDone?'✅ 今日已完成 · 明天继续加油！':'🎯 完成今日学习，打卡！')+'</button>';
+
+  document.getElementById('page-study').innerHTML=h;
+  voiceTargetIdx=0;
 }
 
-// ============ 短语合集（支持搜索 + 分类折叠）============
-function renderPhrases(){
-  const d=document.getElementById('phrases')
-  let html='<div style="margin-bottom:12px"><input type="text" id="searchInput" placeholder="🔍 搜索短句..." style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none"></div>'
-  html+='<div id="searchResults" style="display:none"></div><div id="phraseSections">'
-
-  const entries=Object.entries(PHRASES)
-  entries.forEach(([title,items],si)=>{
-    html+=`<div class="month-divider">📌 ${title} (${items.length}句)</div>`
-    items.forEach(item=>{
-      html+=`<div class="card phrase-card" data-en="${item[0].replace(/"/g,'&quot;')}" data-zh="${item[1].replace(/"/g,'&quot;')}" data-section="${title}">
-        <div class="card-left"><div class="card-en">${item[0]}</div><div class="card-zh">${item[1]}</div></div>
-        <div class="speak-icon">🔊</div>
-      </div>`
-    })
-  })
-  html+='</div>'
-  d.innerHTML=html
-
-  // 点击播放
-  d.querySelectorAll('.phrase-card').forEach(card=>{
-    card.addEventListener('click',function(){speak(this.getAttribute('data-en'))})
-  })
-
-  // 搜索功能
-  const searchInput=d.querySelector('#searchInput')
-  searchInput.addEventListener('input',function(){
-    const q=this.value.trim().toLowerCase()
-    const results=d.querySelector('#searchResults')
-    const sections=d.querySelector('#phraseSections')
-    if(!q){results.style.display='none'; sections.style.display='block'; d.querySelectorAll('.phrase-card').forEach(c=>c.style.display=''); return}
-    results.style.display='block'; sections.style.display='none'
-    let found=[]
-    d.querySelectorAll('.phrase-card').forEach(card=>{
-      const en=card.getAttribute('data-en').toLowerCase()
-      const zh=card.getAttribute('data-zh').toLowerCase()
-      if(en.includes(q)||zh.includes(q))found.push(card)
-    })
-    if(found.length===0){results.innerHTML='<div class="empty-hint">没有找到匹配的短句</div>'}
-    else{results.innerHTML=''; found.forEach(c=>results.appendChild(c.cloneNode(true)));
-      results.querySelectorAll('.phrase-card').forEach(c=>c.addEventListener('click',function(){speak(this.getAttribute('data-en'))}))}
-  })
+function calcStreak(doneDays){
+  if(doneDays.length===0) return 0;
+  const sorted=[...doneDays].sort((a,b)=>b-a);
+  const today=getTodayIndex();
+  if(!sorted.includes(today)&&!sorted.includes(today-1)) return 0;
+  let streak=0,prev=sorted[0];
+  for(const d of sorted){
+    if(streak===0||prev-d<=1){streak++;prev=d}else break;
+  }
+  return streak;
 }
 
-// ============ 我的短句 ============
-function renderCustom(){
-  const d=document.getElementById('custom')
-  const saved=JSON.parse(localStorage.getItem('customPhrases')||'[]')
-  let html=''
-  if(saved.length===0)html+='<div class="empty-hint">还没有自定义短句<br>在下方添加你的专属短句吧</div>'
-  else saved.forEach((item,i)=>{
-    html+=`<div class="card" onclick="if(!event.target.closest('.delete-btn'))speak('${item.en.replace(/'/g,"\\'")}')">
-      <div class="card-left"><div class="card-en">${item.en}</div><div class="card-zh">${item.zh}</div></div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <button class="delete-btn" data-idx="${i}">×</button>
-        <div class="speak-icon" style="margin-left:0">🔊</div>
-      </div>
-    </div>`
-  })
-  html+=`<div class="add-section"><h3>➕ 添加新短句</h3>
-    <input type="text" id="enInput" placeholder="输入英文短句">
-    <input type="text" id="zhInput" placeholder="输入中文翻译">
-    <button class="btn-primary" id="addBtn">添加到我的短句</button>
-  </div>`
-  d.innerHTML=html
+function daysAgo(dateStr){return Math.floor((new Date()-new Date(dateStr))/86400000)}
 
-  // 删除
-  d.querySelectorAll('.delete-btn').forEach(btn=>{
-    btn.addEventListener('click',function(e){
-      e.stopPropagation()
-      const i=parseInt(this.getAttribute('data-idx'))
-      const s=JSON.parse(localStorage.getItem('customPhrases')||'[]')
-      s.splice(i,1)
-      localStorage.setItem('customPhrases',JSON.stringify(s))
-      renderCustom(); showToast('已删除')
-    })
-  })
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-  // 添加
-  const addBtn=d.querySelector('#addBtn')
-  if(addBtn)addBtn.addEventListener('click',function(){
-    const en=document.getElementById('enInput').value.trim()
-    const zh=document.getElementById('zhInput').value.trim()
-    if(!en||!zh){showToast('请填写英文和中文');return}
-    const s=JSON.parse(localStorage.getItem('customPhrases')||'[]')
-    s.push({en,zh})
-    localStorage.setItem('customPhrases',JSON.stringify(s))
-    renderCustom(); showToast('已添加！')
-  })
+// ============================================================
+// 测验
+// ============================================================
+function checkQuiz(choice,answer){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  const fb=document.getElementById('quiz-fb');
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>{
+    if(o.textContent===answer) o.classList.add('correct');
+    else if(o.textContent===choice&&choice!==answer) o.classList.add('wrong');
+    o.style.pointerEvents='none';
+  });
+  if(choice===answer){quizCorrect=1;fb.innerHTML='<span style="color:#27ae60">✅ 正确！</span>'}
+  else{quizCorrect=0;fb.innerHTML='<span style="color:#e74c3c">❌ 正确答案是：<b>'+answer+'</b></span>'}
 }
 
-// ============ 初始化 ============
-renderStudy()    // 默认显示今日学习
-renderPhrases()
-renderCustom()
+// ============================================================
+// 跟读录音
+// ============================================================
+let voiceTargetIdx=0;
+function nextVoiceTarget(){
+  const day=CURR.flatMap(w=>w.d)[currentDay];
+  if(!day) return;
+  voiceTargetIdx=(voiceTargetIdx+1)%day.p.length;
+  document.getElementById('voice-target').textContent=day.p[voiceTargetIdx][0];
+  document.getElementById('voice-result').innerHTML='';
+}
+
+function toggleRecord(){
+  if(isRecording){stopRecord();return}
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){toast('当前浏览器不支持语音识别，请用Chrome打开');return}
+  recognition=new SpeechRecognition();
+  recognition.lang='en-US';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
+  const btn=document.getElementById('btn-record');
+  btn.textContent='🎤 正在听...';btn.classList.add('listening');
+  isRecording=true;
+  recognition.start();
+  recognition.onresult=(e)=>{
+    const said=e.results[0][0].transcript.trim().toLowerCase();
+    const target=document.getElementById('voice-target').textContent.trim().toLowerCase();
+    const result=document.getElementById('voice-result');
+    const match=compareText(said,target);
+    const pct=Math.round(match*100);
+    let cls=pct>=80?'match':pct>=50?'':"miss";
+    result.innerHTML='你说：<span class="'+cls+'">"'+said+'"</span> · 匹配度 <b>'+pct+'%</b>';
+    if(pct>=80) result.innerHTML+=' 🎉';
+    stopRecordUI();
+  };
+  recognition.onerror=()=>{stopRecordUI();toast('没听清，再试一次')};
+  recognition.onend=()=>{stopRecordUI()};
+}
+function stopRecord(){if(recognition){recognition.stop();recognition=null}stopRecordUI()}
+function stopRecordUI(){
+  isRecording=false;
+  const btn=document.getElementById('btn-record');
+  btn.textContent='🎤 开始跟读';btn.classList.remove('listening');
+}
+function compareText(said,target){
+  const sw=said.split(/\s+/).filter(w=>w.length>2);
+  const tw=target.split(/\s+/).filter(w=>w.length>2);
+  if(tw.length===0) return 0;
+  let match=0;
+  for(const w of tw){if(sw.some(s=>s===w||(s.length>3&&w.length>3&&(s.includes(w)||w.includes(s))))) match++}
+  return match/tw.length;
+}
+
+// ============================================================
+// 完成打卡
+// ============================================================
+function finishDay(){
+  if(studyDone) return;
+  const done=getDone();
+  if(!done.includes(currentDay)){done.push(currentDay);saveDone(done)}
+  studyDone=true;
+  const btn=document.getElementById('btn-done');
+  btn.textContent='✅ 今日已完成 · 明天继续加油！';
+  btn.classList.add('done');btn.disabled=true;
+  toast('🎉 打卡成功！明天继续！');
+  setTimeout(()=>renderStudy(),500);
+}
+
+// ============================================================
+// 复习操作
+// ============================================================
+function handleReview(key,grade,el){
+  reviewAction(key,grade);
+  const item=el.closest('.ritem');
+  item.style.transition='all .3s';
+  item.style.opacity='0';item.style.transform='translateX(20px)';
+  setTimeout(()=>{renderStudy()},300);
+}
+
+// ============================================================
+// 全部短语页面
+// ============================================================
+function renderAll(){
+  let h='<input class="search-box" id="search-box" type="text" placeholder="🔍 搜索短语（中英文均可）..." oninput="filterAll()">';
+  const cats=Object.keys(PHRASES);
+  cats.forEach((cat,i)=>{
+    h+='<div class="sec-col'+(i===0?' open':'')+'" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'show\')"><span>'+cat+' ('+PHRASES[cat].length+'句)</span><span class="arr">▼</span></div>';
+    h+='<div class="col-body'+(i===0?' show':'')+'" id="col-'+cat+'">';
+    PHRASES[cat].forEach(p=>{
+      h+='<div class="pitem" onclick="speak(\''+p[0].replace(/'/g,"\\'")+'\')"><div class="pi"><div class="en">'+p[0]+'</div><div class="zh">'+p[1]+'</div></div><button class="btn-spk" onclick="event.stopPropagation();speak(\''+p[0].replace(/'/g,"\\'")+'\')">🔊</button></div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById('page-all').innerHTML=h;
+}
+
+function filterAll(){
+  const q=document.getElementById('search-box').value.toLowerCase();
+  document.querySelectorAll('#page-all .pitem').forEach(el=>{
+    const en=el.querySelector('.en').textContent.toLowerCase();
+    const zh=el.querySelector('.zh').textContent.toLowerCase();
+    el.style.display=(!q||en.includes(q)||zh.includes(q))?'flex':'none';
+  });
+  // auto expand matching sections
+  document.querySelectorAll('#page-all .col-body').forEach(b=>{
+    const has=Array.from(b.querySelectorAll('.pitem')).some(el=>el.style.display!=='none');
+    b.classList.toggle('show',has);
+    const sec=b.previousElementSibling;
+    if(sec) sec.classList.toggle('open',has);
+  });
+}
+
+// ============================================================
+// 我的短句页面
+// ============================================================
+function renderMy(){
+  const items=getMy();
+  let h='<div class="add-box"><h3>✏️ 添加自定义短句</h3>';
+  h+='<input id="my-en" placeholder="English phrase" maxlength="200"><input id="my-zh" placeholder="中文翻译" maxlength="200">';
+  h+='<button onclick="addMy()">添加</button></div>';
+  if(items.length===0){h+='<div style="text-align:center;color:#bbb;padding:30px;font-size:14px">还没有自定义短句，添加第一条吧 ✨</div>'}
+  else{h+='<div class="pcard list">';items.forEach((p,i)=>{h+='<div class="pitem" onclick="speak(\''+p[0].replace(/'/g,"\\'")+'\')"><div class="pi"><div class="en">'+p[0]+'</div><div class="zh">'+p[1]+'</div></div><button class="btn-spk" onclick="event.stopPropagation();speak(\''+p[0].replace(/'/g,"\\'")+'\')">🔊</button><button class="btn-spk" style="background:#fee" onclick="event.stopPropagation();delMy('+i+')">🗑</button></div>'});h+='</div>'}
+  document.getElementById('page-my').innerHTML=h;
+}
+function addMy(){
+  const en=document.getElementById('my-en').value.trim();
+  const zh=document.getElementById('my-zh').value.trim();
+  if(!en||!zh){toast('请填写完整');return}
+  const items=getMy();items.push([en,zh]);saveMy(items);
+  toast('已添加');renderMy();
+}
+function delMy(i){const items=getMy();items.splice(i,1);saveMy(items);renderMy();toast('已删除')}
+
+// ============================================================
+// Tab 切换
+// ============================================================
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    const tab=t.dataset.tab;
+    document.getElementById('page-'+tab).classList.add('active');
+    if(tab==='study') renderStudy();
+    if(tab==='all') renderAll();
+    if(tab==='my') renderMy();
+  });
+});
+
+// ============================================================
+// 启动
+// ============================================================
+renderStudy();
+renderAll();
+renderMy();
+
 </script>
 </body>
 </html>
