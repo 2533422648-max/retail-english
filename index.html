@@ -5,440 +5,625 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="零售英语">
+<meta name="apple-mobile-web-app-title" content="英语学习">
 <meta name="theme-color" content="#4A90D9">
-<title>零售导购英语短句手册</title>
+<title>零售导购英语 · 6个月学习计划</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;color:#333;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,20px)}
+.app-header{background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;padding:16px;text-align:center;position:sticky;top:0;z-index:10}
+.app-header h1{font-size:20px;font-weight:600}
+.app-header p{font-size:12px;opacity:.85;margin-top:2px}
+.tabs{display:flex;background:#fff;position:sticky;top:72px;z-index:9;border-bottom:1px solid #e8e8e8;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:10px 14px;font-size:13px;color:#888;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:#4A90D9;border-bottom-color:#4A90D9}
+.tab.today-tab{font-weight:600}
+.tab.today-tab.active{color:#e67e22;border-bottom-color:#e67e22}
+.content{padding:12px 16px}
+.page{display:none}
+.page.active{display:block}
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f6fa;
-  color: #333;
-  min-height: 100vh;
-  padding-bottom: env(safe-area-inset-bottom, 20px);
-}
+.card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;transition:all .15s;cursor:pointer}
+.card:active{transform:scale(.98);background:#f8f9ff}
+.card-left{flex:1;min-width:0}
+.card-en{font-size:16px;color:#333;font-weight:500;margin-bottom:3px}
+.card-zh{font-size:13px;color:#999}
+.speak-icon{width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:10px;font-size:18px;transition:all .2s}
+.card:active .speak-icon{background:#4A90D9}
+.section-title{font-size:14px;font-weight:600;color:#666;padding:8px 0 4px}
 
-.app-header {
-  background: linear-gradient(135deg, #4A90D9, #357ABD);
-  color: #fff;
-  padding: 20px 16px 12px;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-.app-header h1 { font-size: 22px; font-weight: 600; }
-.app-header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+.add-section{background:#fff;border-radius:12px;padding:16px;margin-top:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.add-section h3{font-size:15px;margin-bottom:10px}
+.add-section input{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:8px;outline:none}
+.add-section input:focus{border-color:#4A90D9}
+.btn-primary{display:block;width:100%;padding:12px;background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+.btn-primary:active{opacity:.85}
 
-.tabs {
-  display: flex;
-  background: #fff;
-  position: sticky;
-  top: 82px;
-  z-index: 9;
-  border-bottom: 1px solid #e8e8e8;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.tabs::-webkit-scrollbar { display: none; }
-.tab {
-  flex: none;
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #888;
-  border: none;
-  background: none;
-  cursor: pointer;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-.tab.active { color: #4A90D9; border-bottom-color: #4A90D9; }
+.empty-hint{text-align:center;color:#bbb;padding:40px 0;font-size:14px}
+.delete-btn{background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
+.delete-btn:active{color:#e74c3c}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
 
-.content { padding: 12px 16px; }
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500;margin-right:4px}
+.tag-retail{background:#fff3e0;color:#e65100}
+.tag-daily{background:#e3f2fd;color:#1565c0}
+.tag-adv{background:#f3e5f5;color:#7b1fa2}
 
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.15s;
-  cursor: pointer;
-}
-.card:active { transform: scale(0.98); background: #f8f9ff; }
+.study-header{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center}
+.study-day{font-size:30px;font-weight:700;color:#e67e22}
+.study-label{font-size:13px;color:#999;margin-top:4px}
+.progress-bar{height:6px;background:#eee;border-radius:3px;margin:10px 0;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#e67e22,#f1c40f);border-radius:3px;transition:width .5s}
+.progress-text{font-size:12px;color:#999}
 
-.card-left { flex: 1; min-width: 0; }
-.card-en { font-size: 16px; color: #333; font-weight: 500; margin-bottom: 3px; }
-.card-zh { font-size: 13px; color: #999; }
+.streak-box{display:flex;justify-content:center;gap:24px;margin-bottom:10px}
+.streak-item{text-align:center}
+.streak-num{font-size:24px;font-weight:700;color:#e67e22}
+.streak-label{font-size:11px;color:#999}
 
-.speak-icon {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: #e8f0fe;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-left: 10px;
-  font-size: 18px;
-  transition: all 0.2s;
-}
-.card:active .speak-icon { background: #4A90D9; }
+.week-header{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:10px}
+.week-header .wk-title{font-size:14px;font-weight:600}
+.week-header .wk-sub{font-size:12px;opacity:.9;margin-top:2px}
 
-.section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
-  padding: 8px 0 6px;
-}
+.conv-box{background:#fffef5;border:1px solid #ffe082;border-radius:10px;padding:12px;margin-bottom:10px}
+.conv-box .conv-title{font-size:13px;font-weight:600;color:#e67e22;margin-bottom:8px}
+.conv-box .conv-line{font-size:14px;padding:6px 8px;border-radius:6px;cursor:pointer;margin-bottom:2px}
+.conv-box .conv-line:active{background:#fff3cd}
+.conv-box .conv-en{color:#333;font-weight:500}
+.conv-box .conv-zh{color:#999;font-size:12px;margin-top:2px}
 
-.page { display: none; }
-.page.active { display: block; }
+.check-btn{display:block;width:100%;margin:12px 0;padding:12px;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+.check-btn:active{opacity:.85}
+.check-btn.done{background:#bbb;cursor:default}
 
-/* 添加短句区域 */
-.add-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  margin-top: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.add-section h3 { font-size: 15px; margin-bottom: 12px; color: #333; }
-.add-section input {
-  width: 100%; padding: 10px 14px;
-  border: 1px solid #ddd; border-radius: 8px;
-  font-size: 14px; margin-bottom: 8px;
-  outline: none;
-}
-.add-section input:focus { border-color: #4A90D9; }
-.add-section button {
-  width: 100%; padding: 12px;
-  background: #4A90D9; color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 15px; font-weight: 600;
-  cursor: pointer;
-}
-.add-section button:active { background: #357ABD; }
+.phrase-collection .section-header{cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.phrase-collection .section-header .arrow{font-size:12px;transition:.3s;color:#999}
+.phrase-collection .section-open .arrow{transform:rotate(180deg)}
+.phrase-collection .section-body{display:none}
+.phrase-collection .section-open .section-body{display:block}
 
-.empty-hint {
-  text-align: center;
-  color: #bbb;
-  padding: 40px 0;
-  font-size: 14px;
-}
-
-.delete-btn {
-  background: none; border: none;
-  color: #ccc; font-size: 20px;
-  cursor: pointer; padding: 4px 8px;
-  line-height: 1;
-}
-.delete-btn:active { color: #e74c3c; }
-
-.toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.75); color: #fff;
-  padding: 10px 24px; border-radius: 20px;
-  font-size: 14px; z-index: 100; opacity: 0; transition: opacity 0.3s;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; }
+.month-divider{background:#f0f4ff;border-radius:10px;padding:10px 14px;margin:14px 0 8px;font-size:14px;font-weight:600;color:#4A90D9}
 </style>
 </head>
 <body>
 
 <div class="app-header">
   <h1>零售导购英语</h1>
-  <p>点击短句可听发音 · 添加到主屏幕当 App 用</p>
+  <p>从工作场景出发 · 6个月日常流利沟通</p>
 </div>
 
 <div class="tabs" id="tabs">
-  <button class="tab active" data-page="home">首页</button>
-  <button class="tab" data-page="unisex">男女同款</button>
-  <button class="tab" data-page="stock">库存尺码</button>
-  <button class="tab" data-page="fitting">试穿建议</button>
-  <button class="tab" data-page="custom">我的短句</button>
+  <button class="tab today-tab active" data-page="study">📖 今日学习</button>
+  <button class="tab" data-page="phrases">📚 全部短句</button>
+  <button class="tab" data-page="custom">✏️ 我的短句</button>
 </div>
 
 <div class="content">
-  <div class="page active" id="home"></div>
-  <div class="page" id="unisex"></div>
-  <div class="page" id="stock"></div>
-  <div class="page" id="fitting"></div>
+  <div class="page active" id="study"></div>
+  <div class="page phrase-collection" id="phrases"></div>
   <div class="page" id="custom"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== 短句数据 =====
-const phrases = {
-  home: {
-    greeting: [
-      { en: 'Hello! Welcome to our store.', zh: '您好！欢迎光临。' },
-      { en: 'How can I help you today?', zh: '今天有什么可以帮您的？' },
-      { en: 'Are you looking for anything specific?', zh: '您在找什么特定的款式吗？' },
-      { en: 'Feel free to look around.', zh: '请随便看看。' },
-      { en: 'Let me know if you need any help.', zh: '有需要随时叫我。' },
-    ],
-    service: [
-      { en: 'This way, please.', zh: '这边请。' },
-      { en: 'Please take your time.', zh: '不着急，慢慢看。' },
-      { en: 'We have a great selection today.', zh: '今天我们有很多好看的款式。' },
-      { en: 'Is this your first time here?', zh: '您是第一次来我们家吗？' },
-      { en: 'We also have an online store.', zh: '我们也有线上店铺。' },
-    ],
-    payment: [
-      { en: 'We accept cash, card, and mobile payment.', zh: '我们支持现金、刷卡和手机支付。' },
-      { en: 'Would you like a receipt?', zh: '需要小票吗？' },
-      { en: 'Please scan the QR code to pay.', zh: '请扫码支付。' },
-      { en: 'Would you like it wrapped as a gift?', zh: '需要帮您包装成礼品吗？' },
-      { en: 'Thank you! Have a nice day!', zh: '谢谢惠顾！祝您愉快！' },
-    ],
-  },
-  unisex: {
-    style: [
-      { en: 'This is a unisex style.', zh: '这款是男女同款。' },
-      { en: 'Both men and women can wear this.', zh: '这款男女都可以穿。' },
-      { en: 'It comes in both men\'s and women\'s sizes.', zh: '这个有男女尺码。' },
-      { en: 'This design is gender-neutral.', zh: '这款设计不分性别。' },
-      { en: 'Many couples buy matching ones.', zh: '很多情侣会买同款搭配。' },
-    ],
-    recommend: [
-      { en: 'This is one of our best-sellers.', zh: '这是我们销量最好的款式之一。' },
-      { en: 'It\'s very popular this season.', zh: '这季非常流行。' },
-      { en: 'The quality is excellent.', zh: '质量非常好。' },
-      { en: 'It goes well with almost anything.', zh: '这件很百搭。' },
-      { en: 'Would you like to try the other color?', zh: '要试试另一个颜色吗？' },
-    ],
-  },
-  stock: {
-    size: [
-      { en: 'What size are you looking for?', zh: '您找什么尺码？' },
-      { en: 'We have sizes from S to XXL.', zh: '我们有 S 到 XXL 码。' },
-      { en: 'This runs a bit small.', zh: '这款偏小一点。' },
-      { en: 'This runs a bit large.', zh: '这款偏大一点。' },
-      { en: 'Would you like to try a size up?', zh: '要试试大一码的吗？' },
-      { en: 'Let me measure it for you.', zh: '我帮您量一下。' },
-    ],
-    inventory: [
-      { en: 'Let me check if we have it in stock.', zh: '我帮您查一下库存。' },
-      { en: 'Yes, we have this in stock.', zh: '这件还有货。' },
-      { en: 'Sorry, this one is out of stock.', zh: '不好意思，这件没货了。' },
-      { en: 'We can order it for you.', zh: '我们可以帮您订。' },
-      { en: 'A new shipment will arrive next week.', zh: '下周会有新货到。' },
-      { en: 'This is the last one we have.', zh: '这是最后一件了。' },
-    ],
-  },
-  fitting: {
-    try: [
-      { en: 'Would you like to try it on?', zh: '要试穿一下吗？' },
-      { en: 'The fitting room is over there.', zh: '试衣间在那边。' },
-      { en: 'How does it fit?', zh: '穿起来感觉怎么样？' },
-      { en: 'Does it feel comfortable?', zh: '穿着舒服吗？' },
-      { en: 'Take your time trying it on.', zh: '慢慢试，不着急。' },
-    ],
-    feedback: [
-      { en: 'It looks great on you!', zh: '您穿上很好看！' },
-      { en: 'This color really suits you.', zh: '这个颜色很适合您。' },
-      { en: 'It fits you perfectly.', zh: '非常合身。' },
-      { en: 'The fabric is very soft and breathable.', zh: '面料很软很透气。' },
-      { en: 'It highlights your figure nicely.', zh: '很显身材。' },
-      { en: 'Shall I bring you a different size?', zh: '要我帮您换一个尺码吗？' },
-    ],
-  },
+// ============ 6个月课程体系 (24周, 每周7天, 共168天) ============
+// 格式: p=[英文,中文]; c=[[英文,中文],...]
+const CURR = [
+// 第1个月：零售英语基础 (Weeks 1-4)
+{w:'接待与问候',m:1, d:[
+  {n:'基本问候',p:[['Hello! How are you today?','你好！今天怎么样？'],['Good morning! Welcome to our store.','早上好！欢迎光临。'],['Nice to meet you. I am your shopping assistant.','很高兴见到您，我是您的导购。']],
+   c:[['Hello, welcome!','您好，欢迎光临！'],['Hi, thank you. This store is beautiful.','你好，谢谢。你们店真漂亮。'],['Thank you! Let me know if you need any help.','谢谢！有需要随时叫我。']]},
+  {n:'自我介绍与询问需求',p:[['How can I help you today?','今天有什么可以帮您的？'],['Are you looking for anything specific?','您在找什么特定的款式吗？'],['Is this your first time shopping with us?','您是第一次来我们家吗？']],
+   c:[['What brings you in today?','今天想找什么？'],['I am just looking around for now.','我先随便看看。'],['Sure! Take your time. I will be right here.','好的您慢慢看，我就在这边。']]},
+  {n:'欢迎回头客',p:[['Welcome back! So nice to see you again.','欢迎回来！很高兴又见到您。'],['How did you like the jacket you bought last time?','上次那件夹克穿得怎么样？'],['We just got some new arrivals you might like.','我们刚到了一批新款，您可能会喜欢。']],
+   c:[['Hey, you are back!','嘿，您又来啦！'],['Yes! I loved the dress I bought here.','对！上次买的裙子很喜欢。'],['That is great! Let me show you our new styles.','太好了！我带您看看新款。'],['Perfect, I would love that.','好呀，正想看呢。']]},
+  {n:'介绍店铺布局',p:[['The women\'s section is on this floor.','女装区在这一层。'],['Fitting rooms are in the back, to your right.','试衣间在后面右手边。'],['We also have shoes and accessories upstairs.','楼上还有鞋子和配饰。']],
+   c:[['Where is the fitting room?','试衣间在哪？'],['Right over there, in the corner.','就在那边角落里。'],['Can I take more than three items in?','可以拿三件以上进去吗？'],['Of course! Take as many as you like.','当然！随便拿。']]},
+  {n:'表达感谢',p:[['Thank you so much for your patience.','非常感谢您的耐心。'],['I really appreciate you coming in today.','真的很感谢您今天光临。'],['It was a pleasure helping you.','很高兴为您服务。']],
+   c:[['Thank you for your help today.','谢谢你今天的帮助。'],['My pleasure! Have a wonderful day!','不客气！祝您愉快！'],['You too! See you next time.','你也是！下次见。']]},
+  {n:'道别与邀请再来',p:[['Hope to see you again soon!','希望很快再见到您！'],['We have new arrivals every Friday.','我们每周五都有新款到。'],['Feel free to come back anytime.','随时欢迎再来。']],
+   c:[['I will definitely come back next week.','我下周肯定再来。'],['Great! I will save some new styles for you.','太好了！我给您留些新款。'],['You are so kind. Goodbye!','你真好。再见！']]},
+  {n:'第一周复习',p:[['Let me know if you have any questions.','有任何问题随时问我。'],['Would you like me to gift wrap this?','需要帮您包装成礼品吗？'],['Thank you for shopping with us!','感谢您在我们店购物！']],
+   c:[['I think that is everything I need.','我想要的就这些了。'],['Wonderful! Let me ring you up.','好的！我帮您结账。'],['Can I pay by card?','可以刷卡吗？'],['Yes, we accept all major cards.','可以的，主流银行卡都支持。']]}
+]},
+{w:'商品介绍与材质',m:1, d:[
+  {n:'服装品类',p:[['We have jackets, coats, sweaters, and hoodies.','我们有夹克、大衣、毛衣和卫衣。'],['This rack is all the new arrivals.','这个货架全是新款。'],['Dresses and skirts are over on that side.','连衣裙和半身裙在那边。']],
+   c:[['Where can I find casual shirts?','休闲衬衫在哪？'],['Right here. What color do you prefer?','这边。您喜欢什么颜色？'],['Something light, maybe white or blue.','浅色的，白色或蓝色吧。']]},
+  {n:'面料材质',p:[['This is 100% pure cotton, very breathable.','这是100%纯棉，非常透气。'],['It is a cotton-polyester blend, wrinkle-free.','这是棉涤混纺的，不易起皱。'],['The lining is silk, so it feels very smooth.','内衬是真丝的，手感很顺滑。']],
+   c:[['What material is this made of?','这是什么面料？'],['It is linen — perfect for summer.','亚麻的，夏天穿特别舒服。'],['Will it shrink after washing?','洗了会缩水吗？'],['No, it is pre-washed. Machine wash is fine.','不会，做过预缩处理，机洗没问题。']]},
+  {n:'颜色与图案',p:[['We have this in black, white, and navy blue.','这款有黑色、白色和深蓝色。'],['This floral print is very popular this season.','这个碎花图案这季非常流行。'],['Solid colors are more versatile for daily wear.','纯色更适合日常搭配。']],
+   c:[['Do you have this in a darker color?','这款有深一点的颜色吗？'],['Yes, we have it in dark gray too.','有的，还有深灰色的。'],['Can I see the dark gray one?','深灰的能给我看看吗？'],['Of course, let me grab it for you.','当然，我去帮您拿。']]},
+  {n:'款式风格',p:[['This is a casual style, great for everyday wear.','这是休闲款，很适合日常穿。'],['That one is more formal, good for the office.','那件偏正式，适合上班穿。'],['This slim-fit cut is very trendy right now.','这个修身版型现在很流行。']],
+   c:[['I need something for a business meeting.','我需要开会穿的衣服。'],['This blazer would be perfect for that.','这件西装外套就很合适。'],['It looks very professional.','看起来很干练。'],['It does! And it pairs well with jeans too.','是的！配牛仔裤也很好看。']]},
+  {n:'面料护理',p:[['This needs to be dry cleaned only.','这款只能干洗。'],['You can machine wash this in cold water.','这个可以冷水机洗。'],['Hang dry, do not put it in the dryer.','悬挂晾干，不要放烘干机。']],
+   c:[['How do I wash this sweater?','这件毛衣怎么洗？'],['Hand wash in cold water, lay flat to dry.','冷水手洗，平铺晾干。'],['That sounds easy enough.','听起来不算麻烦。'],['It is! And it will last for years if cared properly.','是的！保养得当可以穿好几年。']]},
+  {n:'推荐搭配',p:[['This top goes really well with those jeans.','这件上衣配那条牛仔裤很好看。'],['You can dress it up with heels or down with sneakers.','配高跟鞋正式，配运动鞋休闲。'],['A complete outfit from head to toe!','从头到脚一套完整搭配！']],
+   c:[['What would you pair this with?','这件你觉得怎么搭？'],['I would say a white tee and these ankle boots.','我会搭白T恤和这双短靴。'],['Oh, that sounds really nice!','听起来真不错！'],['Try it on and see how you feel!','试试看感觉怎么样！']]},
+  {n:'周复习：描述商品',p:[['This fabric is soft, lightweight, and durable.','这个面料柔软、轻薄还耐穿。'],['It comes in multiple colors and sizes.','有多种颜色和尺码可选。'],['Definitely one of our best quality items.','绝对是我们质量最好的款之一。']],
+   c:[['Why is this one more expensive?','为什么这件更贵？'],['The material is imported and the stitching is hand-done.','面料是进口的，缝线是手工的。'],['I can tell the difference now that you mention it.','你一说我确实看出差别了。']]}
+]},
+{w:'尺码、试穿与反馈',m:1, d:[
+  {n:'询问尺码',p:[['What size do you normally wear?','您平时穿什么码？'],['We carry sizes from XS to XXL.','我们有XS到XXL码。'],['Let me check if we have your size.','我帮您查一下有没有您的码。']],
+   c:[['Do you have this in medium?','这款有中号吗？'],['Let me check. Yes, here you go.','我看看。有的，给您。'],['Thanks! Where can I try it on?','谢谢！试衣间在哪？']]},
+  {n:'试穿引导',p:[['Would you like to try it on?','要试穿一下吗？'],['The fitting room is right this way.','试衣间这边请。'],['Take your time. I will wait right outside.','慢慢试，我在外面等您。']],
+   c:[['Can I try both of these?','这两件都能试吗？'],['Absolutely! I will hang them in the room for you.','当然！我帮您挂到试衣间里。'],['Thank you so much.','太感谢了。']]},
+  {n:'尺码不合适',p:[['This one runs a little small, try a size up.','这款偏小，试试大一码。'],['It is a bit loose. Would you like a smaller size?','有点松，要试试小一码吗？'],['The sleeves are too long for me.','袖子对我来说太长了。']],
+   c:[['This feels a bit tight in the shoulders.','肩这里有点紧。'],['Let me bring you a size large.','我给您换个大号。'],['Yes please, that might work better.','好的，大号可能更合适。']]},
+  {n:'赞美顾客',p:[['That looks amazing on you!','您穿这个太好看了！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。'],['It fits you like it was made for you.','太合身了，像量身定做的一样。']],
+   c:[['What do you think? Does it look okay?','你觉得怎么样？还行吗？'],['Are you kidding? It is perfect on you!','开什么玩笑？太完美了！'],['Really? I am not sure about the length.','真的吗？我不太确定长度。'],['The length is just right — it hits exactly at the right spot.','长度刚好，恰到好处。']]},
+  {n:'试穿反馈',p:[['How does it feel? Comfortable?','穿起来感觉怎么样？舒服吗？'],['Do you like the fit?','您觉得版型怎么样？'],['Walk around a bit, see how it moves.','走几步看看活动起来怎么样。']],
+   c:[['I love the fabric, but the color is not quite me.','面料很喜欢，但颜色不太适合我。'],['No problem! Let me show you the same style in blue.','没问题！这款还有蓝色的。'],['Blue would be much better!','蓝色就好多了！']]},
+  {n:'比较试穿',p:[['Which one do you prefer?','您更喜欢哪一件？'],['They both look great, but for different occasions.','两件都好看，适合不同场合。'],['Take a photo in the mirror if you want!','想的话可以对着镜子拍张照！']],
+   c:[['I cannot decide between these two.','这两件我选不出来。'],['The black one is more classic, the red is more bold.','黑色更经典，红色更大胆。'],['You are right. I will go with the classic black.','你说得对，我选经典的黑色。']]},
+  {n:'第三周复习',p:[['Always try things on — sizes vary by brand.','一定要试穿，不同品牌尺码不一样。'],['If it does not feel right, do not buy it.','穿起来不舒服就别买。'],['Comfort and confidence are equally important.','舒适和自信同样重要。']],
+   c:[['I think I will take all three items!','这三件我都要了！'],['Excellent choices! Let me help you to the counter.','选得太好了！我帮您拿到收银台。'],['You have been so helpful today.','你今天帮了太多忙了。'],['That is what I am here for!','这是我应该做的！']]}
+]},
+{w:'价格、付款与售后',m:1, d:[
+  {n:'价格询问',p:[['How much is this one?','这件多少钱？'],['It is two hundred and ninety-nine yuan.','这件299元。'],['The price tag is on the inside label.','价格标签在内标上。']],
+   c:[['Is there a discount on this?','这件有折扣吗？'],['It is already 30% off, the original was 429.','已经打7折了，原价429。'],['Oh, that is a really good deal!','那确实很划算！']]},
+  {n:'优惠活动',p:[['We have a buy-one-get-one-half-off promotion.','我们有第二件半价活动。'],['If you spend over 500, you get 50 off.','满500减50。'],['Members get an extra 10% off.','会员额外享受9折。']],
+   c:[['Do I need a membership card for the discount?','会员卡才能打折吗？'],['You can sign up right now, it is free!','可以现在就办，免费的！'],['Okay, sign me up!','好，帮我办一张！']]},
+  {n:'付款方式',p:[['We accept cash, WeChat, Alipay, and bank cards.','我们可以收现金、微信、支付宝和银行卡。'],['Would you like to split the payment?','需要分开付吗？'],['Please scan the QR code here.','请扫这里的二维码。']],
+   c:[['Can I pay with Apple Pay?','能用Apple Pay吗？'],['Yes, just tap your phone here.','可以，在这里碰一下就行。'],['So convenient!','太方便了！']]},
+  {n:'打包与发票',p:[['Would you like a gift receipt?','需要礼品小票吗？'],['Shall I wrap it as a gift?','需要帮您包装成礼品吗？'],['Would you like a paper bag or just the item?','要纸袋还是就拿商品？']],
+   c:[['Can you gift wrap this one? It is a present.','这个能帮我包装吗？是送人的。'],['Of course! Let me make it look beautiful.','当然！我帮您包得漂漂亮亮的。'],['Thank you, that would be lovely.','谢谢，太好了。']]},
+  {n:'退换政策',p:[['You can return or exchange within 30 days.','30天内可以退换。'],['Please keep the receipt and tags attached.','请保留小票和吊牌。'],['Sale items are final sale, no returns.','特价商品不退不换。']],
+   c:[['What if it does not fit when I get home?','回家试了不合适怎么办？'],['No worries, just bring it back with the receipt.','没关系，带上小票拿回来就行。'],['Even if I already wore it?','穿过了也能退吗？'],['As long as the tags are still on and it is within 30 days.','只要吊牌还在、30天内就可以。']]},
+  {n:'处理投诉',p:[['I am so sorry about the inconvenience.','给您带来不便非常抱歉。'],['Let me fix this for you right away.','我马上帮您解决。'],['Would you like a refund or an exchange?','您要退款还是换货？']],
+   c:[['There is a small stain on this shirt.','这件衬衫上有个小污渍。'],['Oh no, let me get you a brand new one.','哎呀，我给您拿件全新的。'],['Thank you for handling it so quickly.','谢谢处理得这么快。']]},
+  {n:'第四周复习',p:[['Your total comes to 568 yuan.','您一共消费568元。'],['Here is your change and receipt.','这是找您的钱和小票。'],['Thank you for your purchase! Come back soon!','感谢惠顾！下次再来！']],
+   c:[['I had a great shopping experience today.','今天购物体验太好了。'],['That means a lot to me! Have a wonderful evening.','听到这话我太开心了！祝您今晚愉快。'],['I will definitely recommend this store to friends.','我一定推荐朋友来。']]}
+]},
+
+// 第2个月：零售进阶 + 日常生活基础 (Weeks 5-8)
+{w:'促销技巧与库存管理',m:2, d:[
+  {n:'主动推荐',p:[['Based on what you picked, I think you will love this too.','根据您选的，我觉得您也会喜欢这件。'],['Have you seen our new collection? It just arrived.','您看我们新系列了吗？刚到货的。'],['This style is selling out very fast.','这个款卖得特别快。']],
+   c:[['I am not sure about spending more.','我不太确定要不要多花钱。'],['Totally understand. No pressure at all.','完全理解，绝对不勉强。'],['But it does look really nice.','但它确实很好看。']]},
+  {n:'季节推荐',p:[['This jacket is perfect for the coming autumn.','这件夹克非常适合即将到来的秋季。'],['Light colors are trending this spring.','这个春天流行浅色系。'],['You can layer this with a turtleneck in winter.','冬天可以里面搭高领毛衣。']],
+   c:[['I need something warm for winter.','我需要冬天保暖的。'],['This down coat is our warmest option.','这件羽绒服是我们最保暖的。'],['Is it waterproof too?','也防水吗？'],['The outer layer is water-resistant, yes.','外层是防水的，对。']]},
+  {n:'追加销售',p:[['This belt would complete the look perfectly.','这条皮带会让整套搭配更完整。'],['A scarf in this color would really make it pop.','配这个颜色的围巾会特别出彩。'],['We have matching shoes for this outfit.','这套有配套的鞋子。']],
+   c:[['Okay, you convinced me. I will take the belt too.','好，你说服我了。皮带也要。'],['Great choice! It really ties the whole look together.','选得好！整身搭配一下就完整了。'],['You are a very good salesperson!','你真是个好销售！']]},
+  {n:'库存查询',p:[['Let me check our system for your size.','我帮您在系统里查一下库存。'],['We are out of stock in that color, but more are coming.','那个颜色没货了，但还会补货。'],['I can order it from another store for you.','我可以从其他门店帮您调货。']],
+   c:[['Can you check if you have size 40 in the back?','能帮我看一下后面有没有40码吗？'],['Sure! Give me one minute.','好的，稍等一下。'],['Take your time.','不急。']]},
+  {n:'新品预告',p:[['We are launching a new line next Tuesday.','下周二我们要上一条新线。'],['Would you like me to let you know when it arrives?','到货了我通知您好不好？'],['I can reserve one in your size if you like.','您要的话我可以帮您预留一件您的码。']],
+   c:[['Can you text me when the new bags arrive?','新包包到了能发短信告诉我吗？'],['Absolutely! Can I have your phone number?','当然！方便留个电话吗？'],['Sure, it is 138-xxxx-xxxx.','好的，138-xxxx-xxxx。']]},
+  {n:'节假日促销',p:[['Our holiday sale starts this Friday.','节日大促从本周五开始。'],['Everything will be up to 50% off.','全场低至5折。'],['Come early — the best sizes go fast.','早点来，好尺码抢得快。']],
+   c:[['Is the sale only for members?','活动只对会员吗？'],['No, it is open to everyone.','不，所有人都可以参加。'],['Great! I will bring my friends.','太好了！我带朋友来。']]},
+  {n:'第五周复习',p:[['Would you like to join our VIP program?','要加入我们的VIP会员吗？'],['Members get early access to sales.','会员可以提前参与促销。'],['It only takes two minutes to sign up.','注册只要两分钟。']],
+   c:[['What are the VIP benefits?','VIP有什么福利？'],['Birthday discounts, early sales, and free alterations.','生日折扣、提前促销、免费改衣。'],['That sounds worth it! Sign me up.','听起来很值！帮我注册。']]}
+]},
+{w:'日常寒暄与兴趣爱好',m:2, d:[
+  {n:'日常问候',p:[['How is your day going?','你今天过得怎么样？'],['Did you have a good weekend?','周末过得好吗？'],['How have you been lately?','最近怎么样？']],
+   c:[['How was your weekend?','周末怎么样？'],['It was great! I went hiking with friends.','太棒了！和朋友去爬山了。'],['That sounds fun! Where did you go?','听起来很有趣！去哪了？']]},
+  {n:'谈论爱好',p:[['What do you like to do in your free time?','你空闲时间喜欢做什么？'],['I enjoy reading and listening to music.','我喜欢看书和听音乐。'],['Have you picked up any new hobbies lately?','最近有什么新爱好吗？']]},
+  {n:'美食与餐厅',p:[['Do you like to cook?','你喜欢做饭吗？'],['What is your favorite type of food?','你最喜欢吃什么菜？'],['Have you tried the new restaurant nearby?','你试过附近新开的那家餐厅吗？']]},
+  {n:'电影与音乐',p:[['Have you seen any good movies lately?','最近看了什么好电影吗？'],['What kind of music do you listen to?','你平时听什么类型的音乐？'],['I love watching documentaries.','我很喜欢看纪录片。']]},
+  {n:'运动与健身',p:[['Do you play any sports?','你有什么运动爱好吗？'],['I go jogging three times a week.','我每周慢跑三次。'],['Staying active is so important for health.','保持运动对健康很重要。']]},
+  {n:'宠物与动物',p:[['Do you have any pets at home?','你家里有养宠物吗？'],['I have a cat named Mimi, she is adorable.','我有一只猫叫咪咪，超可爱。'],['Dogs are such loyal companions.','狗真的是很忠诚的伙伴。']]},
+  {n:'第六周复习',p:[['It was really nice chatting with you!','和你聊天真开心！'],['I had a great time talking to you.','和你聊得很愉快。'],['Let us grab coffee sometime!','改天一起喝咖啡吧！']]}
+]},
+{w:'天气、季节与出行',m:2, d:[
+  {n:'谈论天气',p:[['It is such a beautiful day today!','今天天气真好！'],['Looks like it might rain later.','看起来待会可能要下雨。'],['It has been so hot this summer.','今年夏天真热。']]},
+  {n:'季节变化',p:[['Spring is my favorite season.','春天是我最喜欢的季节。'],['I love the colors of autumn leaves.','我喜欢秋天树叶的颜色。'],['Winter is perfect for hot chocolate and warm coats.','冬天最适合热巧克力和暖和的大衣了。']]},
+  {n:'交通出行',p:[['How do you usually get to work?','你平常怎么上班？'],['I take the subway, it is faster than driving.','我坐地铁，比开车快。'],['The bus is always crowded during rush hour.','高峰期公交总是很挤。']]},
+  {n:'问路与指路',p:[['Excuse me, how do I get to the train station?','请问去火车站怎么走？'],['Go straight and turn left at the second light.','直走第二个红绿灯左转。'],['It is about a ten-minute walk from here.','从这走过去大概十分钟。']]},
+  {n:'周末计划',p:[['Any plans for the weekend?','周末有什么计划吗？'],['I am thinking of going to the park.','我想去公园走走。'],['Maybe catch up on some sleep!','可能补补觉吧！']]},
+  {n:'假期旅行',p:[['Where did you go for your last vacation?','上次假期去哪玩了？'],['I went to Yunnan, it was breathtaking.','去了云南，美得令人窒息。'],['I would love to visit Japan someday.','有朝一日我想去日本。']]},
+  {n:'第七周复习',p:[['The weather has been so unpredictable lately.','最近天气太变化无常了。'],['Make sure to bring an umbrella just in case.','最好带把伞以防万一。'],['Safe travels and enjoy your trip!','一路平安，旅途愉快！']]}
+]},
+{w:'购物体验与日常生活',m:2, d:[
+  {n:'作为顾客购物',p:[['I am just browsing, thank you.','我就随便看看，谢谢。'],['Do you have this in a different color?','这款有其他颜色吗？'],['Can I try this on, please?','请问我可以试穿这个吗？']]},
+  {n:'超市购物',p:[['Where can I find the dairy section?','奶制品区在哪？'],['These are on sale, buy one get one free.','这些在促销，买一送一。'],['Do you need a shopping bag?','需要购物袋吗？']]},
+  {n:'餐厅点餐',p:[['I would like to order the grilled chicken, please.','我要一份烤鸡，谢谢。'],['Can I see the menu, please?','能给我看一下菜单吗？'],['Could I have the bill, please?','麻烦买单。']]},
+  {n:'医院看病',p:[['I have a headache and feel dizzy.','我头疼，还有点晕。'],['How long have you been feeling this way?','这种情况多久了？'],['Take this medicine twice a day after meals.','这个药每天两次，饭后吃。']]},
+  {n:'银行办事',p:[['I would like to open a new account.','我想开一个新账户。'],['Can I see your ID card, please?','请出示一下您的身份证。'],['Please enter your PIN number.','请输入您的密码。']]},
+  {n:'日常生活琐事',p:[['I need to do laundry this evening.','今晚得洗衣服。'],['The fridge is almost empty, time to go grocery shopping.','冰箱快空了，该去买菜了。'],['I try to tidy up the house every Sunday.','我尽量每个周日收拾房间。']]},
+  {n:'第八周复习',p:[['Practice makes perfect — keep using English every day!','熟能生巧，每天多用英语！'],['Do not be afraid to make mistakes.','别怕犯错。'],['Every conversation is a step forward.','每次对话都是进步。']]}
+]},
+
+// 第3个月：日常交流能力 (Weeks 9-12)
+{w:'家庭与朋友',m:3, d:[
+  {n:'介绍家庭',p:[['There are four people in my family.','我家有四口人。'],['I have an older brother and a younger sister.','我有一个哥哥和一个妹妹。'],['My parents live in my hometown.','我父母住在老家。']]},
+  {n:'谈论朋友',p:[['We have been friends since high school.','我们从高中就认识了。'],['She is one of my closest friends.','她是我最好的朋友之一。'],['Good friends are hard to find.','好朋友难得。']]},
+  {n:'描述人物',p:[['She is tall with long black hair.','她很高，长头发黑黑的。'],['He has a great sense of humor.','他很有幽默感。'],['My mom is the kindest person I know.','我妈是我认识的最善良的人。']]},
+  {n:'表达关心',p:[['Are you feeling okay? You look tired.','你还好吗？看起来很累。'],['Let me know if you need anything.','需要什么随时说。'],['I am here for you, no matter what.','不管怎样我都在你身边。']]},
+  {n:'庆祝与祝福',p:[['Happy birthday! I hope you have a wonderful day.','生日快乐！祝你今天特别开心。'],['Congratulations on your promotion!','恭喜升职！'],['Best wishes for your new journey!','祝你新的旅程一切顺利！']]},
+  {n:'道歉与原谅',p:[['I am really sorry about what happened.','对于发生的事情我真的很抱歉。'],['It is okay, I forgive you.','没关系，我原谅你。'],['Let us just move on and not dwell on it.','我们翻篇吧，别再想了。']]},
+  {n:'第九周复习',p:[['Family and friends are what truly matter.','家人和朋友才是真正重要的。'],['Cherish the people who care about you.','珍惜在乎你的人。'],['A true friend is a treasure for life.','真正的朋友是一生的财富。']]}
+]},
+{w:'工作与职场沟通',m:3, d:[
+  {n:'介绍工作',p:[['I work as a sales assistant in a clothing store.','我在服装店做导购。'],['I have been doing this job for three years.','我干这行三年了。'],['I really enjoy interacting with customers.','我很喜欢和顾客打交道。']]},
+  {n:'同事沟通',p:[['Could you cover my shift this Saturday?','这周六能帮我替个班吗？'],['Let us work together on this task.','这个任务我们一起做吧。'],['Great teamwork today, everyone!','今天团队配合太棒了，大家辛苦了！']]},
+  {n:'安排与计划',p:[['I have a meeting at 3 p.m. this afternoon.','今天下午三点我有个会。'],['Let us set a deadline for next Friday.','我们把截止日期定在下周五吧。'],['I will send you the details by email.','我会把细节发邮件给你。']]},
+  {n:'表达意见',p:[['In my opinion, we should try a different approach.','我的看法是，我们应该试试不同的方法。'],['I see your point, but I respectfully disagree.','我理解你的意思，但我有不同看法。'],['That is a really creative idea!','这个想法真有创意！']]},
+  {n:'请求帮助',p:[['Could you give me a hand with this?','能帮我一下吗？'],['I am a bit stuck, can I ask for your advice?','我有点卡住了，能请教一下吗？'],['Thank you so much for your help!','太感谢你的帮助了！']]},
+  {n:'汇报工作',p:[['Here is a quick update on the project.','这是项目的快速进展汇报。'],['Everything is on track so far.','目前一切按计划进行。'],['I will keep you posted on any changes.','有任何变动我会随时告知。']]},
+  {n:'第十周复习',p:[['Communication is the key to any team.','沟通是任何团队的关键。'],['A positive attitude makes work so much easier.','积极的态度让工作轻松很多。'],['Keep learning and growing every single day.','每天都要学习和成长。']]}
+]},
+{w:'健康与生活方式',m:3, d:[
+  {n:'健康习惯',p:[['I try to get at least seven hours of sleep.','我尽量保证至少七小时睡眠。'],['Drinking enough water is so important.','喝够水非常重要。'],['Too much screen time is bad for your eyes.','看屏幕太久对眼睛不好。']]},
+  {n:'饮食营养',p:[['I have been trying to eat more vegetables.','我最近在尝试多吃蔬菜。'],['Breakfast is the most important meal of the day.','早餐是一天中最重要的一餐。'],['Try to cut down on sugar and processed food.','尽量少吃糖和加工食品。']]},
+  {n:'情绪管理',p:[['Take a deep breath and relax.','深呼吸，放松一下。'],['It is okay to feel sad sometimes.','偶尔难过是正常的。'],['Talking to someone really helps when you feel down.','心情不好时找人聊聊真的有用。']]},
+  {n:'约医生',p:[['I would like to make an appointment, please.','我想预约一下。'],['The doctor will see you in a few minutes.','医生几分钟后就来。'],['Do you have any allergies to medicine?','你对什么药过敏吗？']]},
+  {n:'健身运动',p:[['I go to the gym three times a week.','我每周去三次健身房。'],['Yoga helps me relax after a long day.','瑜伽帮我缓解一天的疲劳。'],['Even a short walk can boost your mood.','即使短暂的散步也能改善心情。']]},
+  {n:'日常生活节奏',p:[['I am definitely a morning person.','我绝对是早起型的人。'],['My morning routine starts with a cup of coffee.','我的早晨从一杯咖啡开始。'],['Finding balance between work and life is key.','找到工作与生活的平衡是关键。']]},
+  {n:'第十一周复习',p:[['Your health is your greatest wealth.','健康是最大的财富。'],['Small daily habits lead to big changes.','每天的小习惯会带来大改变。'],['Listen to your body and take care of yourself.','倾听自己的身体，照顾好自己。']]}
+]},
+{w:'文化与娱乐',m:3, d:[
+  {n:'节日庆典',p:[['Spring Festival is the most important holiday in China.','春节是中国最重要的节日。'],['We usually have a big family dinner on New Year\'s Eve.','除夕我们通常全家一起吃年夜饭。'],['Christmas is celebrated all around the world.','圣诞节在世界各地都庆祝。']]},
+  {n:'中西方文化差异',p:[['In China, red symbolizes good luck and happiness.','在中国，红色代表好运和幸福。'],['Westerners often make more direct eye contact.','西方人眼神交流通常更直接。'],['Gift-giving customs can be very different across cultures.','送礼的习俗在不同文化中差异很大。']]},
+  {n:'读书与学习',p:[['I am currently reading a book about self-improvement.','我最近在读一本关于自我提升的书。'],['Reading broadens your mind and vocabulary.','阅读能开阔思维、丰富词汇。'],['What kind of books do you enjoy?','你喜欢看什么类型的书？']]},
+  {n:'网络与社交媒体',p:[['I spend way too much time on social media.','我在社交媒体上花太多时间了。'],['Have you seen that viral video everyone is talking about?','你看大家都在说的那个热门视频了吗？'],['The internet has completely changed how we communicate.','互联网彻底改变了我们沟通的方式。']]},
+  {n:'艺术与创作',p:[['I love visiting art museums on weekends.','我喜欢周末逛美术馆。'],['Music is a universal language that connects people.','音乐是连接人们的通用语言。'],['Photography helps me capture beautiful moments.','摄影帮我记录美好瞬间。']]},
+  {n:'娱乐休闲',p:[['Let us go watch a movie this weekend!','这周末一起去看电影吧！'],['I am binge-watching a really good drama right now.','我最近在狂追一部特别好的剧。'],['Board games are a great way to spend time with friends.','桌游是和朋友消磨时间的好方式。']]},
+  {n:'第十二周复习',p:[['Culture makes every country unique and beautiful.','文化让每个国家独特而美丽。'],['Learning about other cultures opens your mind.','了解其他文化能开阔视野。'],['There is so much to explore in this world.','这世界有太多值得探索的东西。']]}
+],
+
+// 第4个月：深入交流 (Weeks 13-16)
+{w:'表达观点与感受',m:4, d:[
+  {n:'表达喜欢',p:[['I absolutely love this song!','我超级爱这首歌！'],['This is hands down the best coffee in town.','这绝对是城里最好的咖啡。'],['I am a big fan of his work.','我是他作品的忠实粉丝。']]},
+  {n:'表达不喜欢',p:[['To be honest, I am not a big fan of spicy food.','说实话我不太能吃辣。'],['This is not really my style.','这个不太是我的风格。'],['I would rather do something else.','我宁愿做点别的。']]},
+  {n:'表达情绪',p:[['I feel so happy today, everything is going well.','今天太开心了，一切都很顺利。'],['I am a bit stressed about the deadline.','快截止了，我有点压力。'],['Honestly, I am feeling a mix of excitement and nervousness.','说实话我既兴奋又紧张。']]},
+  {n:'给予建议',p:[['If I were you, I would give it a try.','如果我是你，我会试一下。'],['You should really check out that new cafe.','你真的该去试试那家新咖啡馆。'],['My advice is to take it one step at a time.','我的建议是一步一步来。']]},
+  {n:'安慰与鼓励',p:[['Don\'t worry, everything will be fine.','别担心，一切都会好起来的。'],['You have got this! I believe in you.','你能行的！我相信你。'],['Failure is just a stepping stone to success.','失败只是通往成功的垫脚石。']]},
+  {n:'赞美他人',p:[['You have a really good eye for fashion.','你对时尚真的很有眼光。'],['Your English is improving so fast!','你的英语进步太快了！'],['I really admire your positive attitude.','我真佩服你的积极态度。']]},
+  {n:'第十三周复习',p:[['Feelings are meant to be shared, not hidden.','感受是拿来分享的，不是藏起来的。'],['A kind word can brighten someone\'s entire day.','一句暖心的话能照亮别人一整天。'],['Always be honest about how you feel.','永远诚实地面对自己的感受。']]}
+]},
+{w:'旅行与见闻',m:4, d:[
+  {n:'订酒店与机票',p:[['I would like to book a double room for two nights.','我想订一间双人房，住两晚。'],['What time is check-in and check-out?','入住和退房时间是几点？'],['Is breakfast included in the price?','房价含早餐吗？']]},
+  {n:'机场英语',p:[['Where is the check-in counter for this flight?','这个航班的登机柜台在哪？'],['Can I have a window seat, please?','能给我靠窗的座位吗？'],['My luggage is overweight, what should I do?','我的行李超重了，怎么办？']]},
+  {n:'酒店入住',p:[['I have a reservation under the name Li.','我有一个姓李的预订。'],['Is there free Wi-Fi in the room?','房间里有免费Wi-Fi吗？'],['Could I have an extra pillow, please?','能多给我一个枕头吗？']]},
+  {n:'城市观光',p:[['What are the must-see attractions in this city?','这个城市有什么必去的景点？'],['Is there a guided tour available?','有导游带领的游览吗？'],['Can you take a picture of me, please?','能帮我拍张照吗？']]},
+  {n:'紧急情况',p:[['I lost my passport. What should I do?','我护照丢了，该怎么办？'],['Is there a hospital nearby?','附近有医院吗？'],['Can you help me call the police?','能帮我报警吗？']]},
+  {n:'分享旅行经历',p:[['I just got back from an amazing trip to Guilin.','我刚从桂林回来，太美了。'],['The food there was absolutely incredible.','那里的食物简直太好吃了。'],['Traveling really changes how you see the world.','旅行真的会改变你看世界的方式。']]},
+  {n:'第十四周复习',p:[['The world is a book, and those who do not travel read only one page.','世界是一本书，不旅行的人只读了其中一页。'],['Every journey teaches you something new.','每次旅程都教会你新东西。'],['Collect memories, not just things.','收集回忆，而不只是物品。']]}
+]},
+{w:'科技与现代生活',m:4, d:[
+  {n:'手机与App',p:[['I cannot imagine life without my smartphone.','我无法想象没有智能手机的生活。'],['There is an app for almost everything these days.','现在几乎什么都有对应的App。'],['Make sure to update your apps regularly.','记得定期更新App。']]},
+  {n:'在线购物',p:[['I do most of my shopping online now.','我现在大部分东西都在网上买。'],['The delivery was super fast, only two days.','快递超快，两天就到了。'],['Make sure to check the reviews before buying.','买之前一定要看评价。']]},
+  {n:'人工智能',p:[['AI is changing every industry right now.','AI正在改变每一个行业。'],['Have you tried using ChatGPT?','你试过用ChatGPT吗？'],['Technology should make our lives easier, not harder.','科技应该让生活更简单，而不是更复杂。']]},
+  {n:'网络安全',p:[['Never share your password with anyone.','永远不要把密码告诉别人。'],['Be careful about what you post online.','在网上发布内容要谨慎。'],['Use a strong password with letters, numbers, and symbols.','用包含字母、数字和符号的强密码。']]},
+  {n:'电子支付',p:[['Mobile payment is so convenient in China.','在中国手机支付太方便了。'],['I hardly ever carry cash anymore.','我现在几乎不带现金了。'],['Just scan the QR code and you are done.','扫一下二维码就搞定了。']]},
+  {n:'远程工作',p:[['Working from home has become the new normal.','在家办公成了新常态。'],['Video calls save so much travel time.','视频会议省了好多跑路的时间。'],['But I do miss the office coffee chats sometimes.','不过有时候还是想念办公室的咖啡闲聊。']]},
+  {n:'第十五周复习',p:[['Technology is a tool, not a lifestyle.','科技是工具，不是生活方式。'],['Stay curious and keep learning new things.','保持好奇心，不断学习新东西。'],['The best technology is the one that connects people.','最好的科技是能把人连接起来的科技。']]}
+]},
+{w:'学习与成长',m:4, d:[
+  {n:'学习方法',p:[['I learn best by doing, not just reading.','我通过实操学得最好，光看书不行。'],['Setting small daily goals really helps.','设定每天的小目标真的很有帮助。'],['Consistency is more important than intensity.','坚持比强度更重要。']]},
+  {n:'谈论进步',p:[['I can already feel myself improving!','我已经能感受到自己在进步了！'],['Comparing yourself to yesterday, not to others.','和昨天的自己比，不要和别人比。'],['Every expert was once a beginner.','每个专家都曾是初学者。']]},
+  {n:'克服困难',p:[['I hit a plateau but I will push through.','我遇到了瓶颈，但我会克服的。'],['Struggling is part of the learning process.','挣扎是学习过程的一部分。'],['When things get hard, that is when you grow the most.','最难的时候，正是成长最多的时候。']]},
+  {n:'寻求反馈',p:[['Can you give me some honest feedback?','能给我一些真实的反馈吗？'],['What do you think I could improve?','你觉得我哪里还可以提高？'],['Thank you for pointing that out, I will work on it.','谢谢你指出来，我会改进的。']]},
+  {n:'设定目标',p:[['My goal is to speak English fluently within six months.','我的目标是半年内流利说英语。'],['I break big goals into small weekly tasks.','我把大目标拆成每周的小任务。'],['Tracking progress keeps me motivated.','追踪进展让我保持动力。']]},
+  {n:'终身学习',p:[['Learning does not stop when school ends.','学习不会在学校结束就停止。'],['The more I learn, the more I realize how much I don\'t know.','学得越多，越觉得自己知道的少。'],['Stay hungry, stay foolish.','求知若饥，虚心若愚。']]},
+  {n:'第十六周复习',p:[['Halfway through the journey — keep going!','旅程过半，继续加油！'],['You have already learned over 300 phrases!','你已经学了超过300个短句了！'],['The second half is where the magic happens.','后半程才是奇迹发生的地方。']]}
+]},
+
+// 第5个月：高级表达 (Weeks 17-20)
+{w:'讲述故事与经历',m:5, d:[
+  {n:'叙述过去',p:[['Let me tell you what happened yesterday.','我来跟你说说昨天发生的事。'],['It all started when I walked into the store.','一切都是从我走进店里开始的。'],['You will not believe what happened next!','你绝对想不到接下来发生了什么！']]},
+  {n:'描述事件',p:[['At first, everything seemed normal.','一开始一切看起来很正常。'],['Then suddenly, the lights went out.','然后突然灯全灭了。'],['Everyone was shocked and confused.','所有人都惊呆了，不知所措。']]},
+  {n:'制造悬念',p:[['And then, out of nowhere...','然后突然间...'],['I had a feeling something was about to happen.','我就有种预感要出事。'],['The moment I saw it, I knew my life had changed.','看到它的那一刻，我就知道人生要变了。']]},
+  {n:'分享趣事',p:[['The funniest thing happened to me today.','今天发生了一件超搞笑的事。'],['I laughed so hard I almost cried.','我笑得快哭了。'],['You had to be there to see his face!','你得在场才能看到他当时的表情！']]},
+  {n:'讲述经历',p:[['This reminds me of a story from a few years ago.','这让我想起几年前的一件事。'],['I will never forget that experience.','我永远不会忘记那次经历。'],['Looking back, it taught me a valuable lesson.','回首来看，那次给了我很宝贵的教训。']]},
+  {n:'表达感受与反思',p:[['In hindsight, I would have done things differently.','事后想想，我会用不同的方式处理。'],['That moment made me who I am today.','那一刻塑造了今天的我。'],['Every experience, good or bad, shapes us.','每一次经历，无论好坏，都在塑造我们。']]},
+  {n:'第十七周复习',p:[['Everyone has a story worth telling.','每个人都有一个值得讲述的故事。'],['Listening is just as important as speaking.','倾听和说话同样重要。'],['Your stories make you unique — share them!','你的故事让你独一无二，分享它们吧！']]}
+]},
+{w:'比较、辩论与说服',m:5, d:[
+  {n:'做比较',p:[['Compared to last year, our sales have increased a lot.','和去年相比，我们销量涨了很多。'],['This one is slightly better than that one.','这个比那个稍微好一点。'],['They are completely different — you cannot compare them.','它们完全不同，没法比较。']]},
+  {n:'表达同意',p:[['I completely agree with you on that.','这点我完全同意你。'],['You took the words right out of my mouth.','你说出了我想说的话。'],['That is exactly what I was thinking.','这正是我想的。']]},
+  {n:'礼貌反驳',p:[['I see where you are coming from, but I think differently.','我理解你的看法，但我有不同的想法。'],['That is one way to look at it, but consider this.','这是一种看法，但再想想这个角度。'],['I respectfully disagree with that point.','这一点我持不同意见。']]},
+  {n:'说服他人',p:[['Trust me, you will not regret it.','相信我，你不会后悔的。'],['Just give it a try — what do you have to lose?','试试看嘛，又没有什么损失。'],['If I can do it, so can you.','我都能做到，你肯定也行。']]},
+  {n:'权衡利弊',p:[['On one hand it is cheaper, on the other hand the quality is lower.','一方面更便宜，另一方面质量差一些。'],['We need to weigh the pros and cons carefully.','我们需要仔细权衡利弊。'],['The benefits far outweigh the risks.','好处远远大于风险。']]},
+  {n:'做出决定',p:[['After thinking it over, I have made my decision.','仔细考虑之后，我做了决定。'],['I am going to go with my gut on this one.','这件事我打算跟着直觉走。'],['Sometimes you just have to take a leap of faith.','有时候你只需要勇敢一跳。']]},
+  {n:'第十八周复习',p:[['Disagreement does not mean disrespect.','不同意不代表不尊重。'],['The best conversations happen when minds meet, not collide.','最好的对话发生在思想交汇而非碰撞时。'],['Be open to changing your mind — that is growth.','保持开放心态，愿意改变想法，这就是成长。']]}
+]},
+{w:'英语习语与地道表达',m:5, d:[
+  {n:'常用习语1',p:[['It is a piece of cake! (very easy)','小菜一碟！'],['Break a leg! (good luck)','祝你好运！'],['Hit the books. (start studying)','开始用功学习。']]},
+  {n:'常用习语2',p:[['Hang in there! (don\'t give up)','坚持住！'],['It is not my cup of tea. (not my preference)','不是我的菜。'],['We will cross that bridge when we come to it.','船到桥头自然直。']]},
+  {n:'常用习语3',p:[['Let us call it a day. (stop working)','今天就到这吧。'],['I am all ears. (listening carefully)','我洗耳恭听。'],['That rings a bell. (sounds familiar)','听起来有点耳熟。']]},
+  {n:'常用习语4',p:[['Better late than never.','迟到总比不到好。'],['Actions speak louder than words.','行动胜于言语。'],['Every cloud has a silver lining.','黑暗中总有一线光明。']]},
+  {n:'常用俚语',p:[['That is so cool! (awesome)','太酷了！'],['I am kind of beat. (tired)','我有点累趴了。'],['No worries! (it is okay)','没事！不用担心！']]},
+  {n:'口语缩略',p:[['Gonna = going to; Wanna = want to','Gonna=打算；Wanna=想要'],['Kinda = kind of; Sorta = sort of','Kinda=有点；Sorta=差不多'],['Gotta = got to; Lemme = let me','Gotta=得；Lemme=让我']]},
+  {n:'第十九周复习',p:[['Using idioms makes you sound more natural.','用习语让你听起来更地道。'],['But do not overuse them — keep it balanced.','但别用太多，保持平衡。'],['When in Rome, do as the Romans do.','入乡随俗。']]}
+]},
+{w:'电话与邮件沟通',m:5, d:[
+  {n:'接电话',p:[['Hello, this is Li speaking.','你好，我是小李。'],['May I ask who is calling?','请问您是哪位？'],['Could you please hold for a moment?','请稍等一下好吗？']]},
+  {n:'打电话',p:[['Hi, is this the right number for customer service?','你好，请问是客服电话吗？'],['I am calling to ask about my order.','我打电话是想问一下我的订单。'],['Could you transfer me to the manager, please?','能帮我转接经理吗？']]},
+  {n:'写邮件',p:[['Dear Mr. Wang, I hope this email finds you well.','王先生您好，希望您一切安好。'],['I am writing to follow up on our last conversation.','我写这封邮件跟进一下我们上次的沟通。'],['Please find the attachment below.','附件请见下方。']]},
+  {n:'回复邮件',p:[['Thank you for your prompt response.','感谢您的及时回复。'],['I will get back to you by the end of this week.','我本周内回复您。'],['Please do not hesitate to reach out if you have any questions.','有任何问题请随时联系我。']]},
+  {n:'预约与确认',p:[['I would like to confirm our appointment for tomorrow.','我想确认一下明天的预约。'],['Does 3 p.m. work for you?','下午三点您方便吗？'],['Looking forward to meeting you in person.','期待与您当面交流。']]},
+  {n:'发送消息',p:[['Just wanted to check in and see how things are going.','就想问问情况怎么样了。'],['No rush, take your time.','不急，慢慢来。'],['Let me know when you have a moment.','方便的时候跟我说一声。']]},
+  {n:'第二十周复习',p:[['Clear communication is key in any channel.','任何沟通渠道中，清晰表达都是关键。'],['Always be polite and professional in writing.','书面沟通永远要礼貌专业。'],['A quick reply shows respect for the other person.','快速回复是对对方的尊重。']]}
+]},
+
+// 第6个月：流利沟通 (Weeks 21-24)
+{w:'深度话题讨论',m:6, d:[
+  {n:'环境与自然',p:[['We all need to do our part to protect the environment.','我们都需要为保护环境尽一份力。'],['Plastic pollution is a serious global issue.','塑料污染是一个严重的全球问题。'],['Small changes in daily habits can make a big difference.','日常习惯的小改变能带来大不同。']]},
+  {n:'社会话题',p:[['What do you think about the gig economy?','你怎么看零工经济？'],['Social media has both positive and negative effects.','社交媒体有利有弊。'],['It is a complicated issue with no easy answers.','这是个复杂的问题，没有简单的答案。']]},
+  {n:'人生哲学',p:[['What do you think is the meaning of life?','你觉得人生的意义是什么？'],['Happiness is not a destination, it is a way of traveling.','幸福不是目的地，而是旅行的方式。'],['The best things in life are not things.','人生最好的东西都不是东西。']]},
+  {n:'梦想与未来',p:[['Where do you see yourself in five years?','你觉得五年后自己会在哪里？'],['I have always dreamed of starting my own business.','我一直梦想自己创业。'],['It is never too late to chase your dreams.','追逐梦想永远不嫌晚。']]},
+  {n:'解决问题',p:[['Let us think through this problem step by step.','我们一步一步分析这个问题。'],['What is the root cause of this issue?','这个问题的根本原因是什么？'],['I think we can find a solution if we work together.','我觉得一起想办法肯定能解决。']]},
+  {n:'幽默与玩笑',p:[['Are you pulling my leg? (joking)','你在逗我吧？'],['I am just messing with you!','我逗你玩的！'],['You have got to be kidding me!','你开玩笑的吧！']]},
+  {n:'第二十一周复习',p:[['Deep conversations build deep connections.','深度对话建立深度连接。'],['Do not be afraid to talk about big ideas.','别害怕谈论宏大的想法。'],['The best conversations leave you thinking for days.','最好的对话能让你回味好几天。']]}
+]},
+{w:'面试与商务场景',m:6, d:[
+  {n:'自我介绍',p:[['I am a dedicated and hardworking individual.','我是一个敬业勤奋的人。'],['I have strong communication and problem-solving skills.','我有很强的沟通和解决问题的能力。'],['I am always eager to learn new things.','我一直渴望学习新东西。']]},
+  {n:'面试问答',p:[['Why do you want to work here?','你为什么想在这里工作？'],['What are your greatest strengths and weaknesses?','你最大的优点和缺点是什么？'],['Where do you see yourself in five years?','你五年后想成为什么样？']]},
+  {n:'商务会议',p:[['Let us get down to business.','我们进入正题吧。'],['I would like to propose a new strategy.','我想提出一个新策略。'],['Does anyone have any questions or comments?','有人有问题或意见吗？']]},
+  {n:'商务谈判',p:[['Let us find a solution that works for both of us.','我们来找到一个双方都能接受的方案。'],['I think we can meet you halfway on this.','我觉得这点我们可以各让一步。'],['That sounds like a fair deal to me.','这个方案听起来很公平。']]},
+  {n:'演讲展示',p:[['Good morning, everyone. Thank you for being here.','大家早上好，感谢各位的到来。'],['Today I would like to talk about three main points.','今天我想讲三个要点。'],['To sum up, I believe this is the way forward.','总结一下，我认为这就是前进的方向。']]},
+  {n:'社交网络',p:[['It was great meeting you. Let us stay in touch.','很高兴认识你，保持联系。'],['Here is my business card.','这是我的名片。'],['I would love to grab coffee and chat more sometime.','改天一起喝咖啡多聊聊。']]},
+  {n:'第二十二周复习',p:[['First impressions matter — be confident and prepared.','第一印象很重要，自信且做好准备。'],['Networking is about building genuine relationships.','社交是建立真诚的关系。'],['Your skills + your attitude = your career.','你的技能+你的态度=你的职业生涯。']]}
+]},
+{w:'社交聚会与自由对话',m:6, d:[
+  {n:'派对寒暄',p:[['Great party, isn\'t it?','派对很棒吧？'],['How do you know the host?','你和主办人怎么认识的？'],['Can I get you something to drink?','要帮你拿杯喝的吗？']]},
+  {n:'初次见面',p:[['I do not think we have met. I am Li.','我们应该没见过，我是小李。'],['So what do you do for a living?','你是做什么工作的？'],['It is so nice to finally meet you in person.','终于见到你本人了，真高兴。']]},
+  {n:'深入对话',p:[['That is fascinating — tell me more about it.','那太有意思了，再多讲讲。'],['I had a similar experience once.','我也有过一次类似的经历。'],['You have given me a lot to think about.','你说的让我思考很多。']]},
+  {n:'约会英语',p:[['Would you like to grab dinner sometime?','改天一起吃个饭好吗？'],['I had a really lovely time tonight.','今晚真的很愉快。'],['Can I walk you home?','我能送你回家吗？']]},
+  {n:'祝贺与道别',p:[['It was so wonderful catching up with you.','跟你叙旧太开心了。'],['We should do this more often!','我们应该多聚聚！'],['Take care and keep in touch!','保重，保持联系！']]},
+  {n:'自由话题',p:[['If you could live anywhere in the world, where would it be?','如果能住世界任何地方，你选哪里？'],['What is the best advice you have ever received?','你收到过的最好的建议是什么？'],['What is something you are really passionate about?','你真正热爱的事情是什么？']]},
+  {n:'第二十三周复习',p:[['Real conversation flows naturally — do not overthink it.','真正的对话自然流动，别想太多。'],['Ask questions, listen actively, and be genuinely curious.','提问、积极倾听、真心好奇。'],['You are now a confident English speaker!','你现在已经是一个自信的英语交流者了！']]}
+]},
+{w:'总复习与毕业',m:6, d:[
+  {n:'回顾：接待场景',p:[['How may I assist you today?','今天有什么可以帮您？'],['Please feel free to look around.','请随意看看。'],['Thank you for choosing our store.','感谢选择我们店铺。']],c:[['Welcome! How can I help?','欢迎！需要帮忙吗？'],['I am looking for a gift for my friend.','想给朋友挑个礼物。'],['Great! What is the occasion?','好的！什么场合？']]},
+  {n:'回顾：商品介绍',p:[['This is one of our premium pieces.','这是我们的一件高端单品。'],['The craftsmanship is truly exceptional.','做工确实非常出色。'],['It is an investment piece that will last for years.','这是一件能穿很多年的投资款。']],c:[['What makes this so special?','这款特别在哪？'],['Look at the stitching — all hand-done.','看这缝线，全手工的。'],['Wow, I can see the difference.','哇，确实看得出差别。']]},
+  {n:'回顾：尺码试穿',p:[['Let me help you find the perfect fit.','我帮您找到最合适的尺码。'],['How does the shoulder area feel?','肩膀那里感觉怎么样？'],['We offer free alterations if needed.','如果需要我们可以免费改衣。']],c:[['It fits perfectly now!','现在非常合身！'],['I am so glad! You look fantastic.','太好了！您看起来棒极了。']]},
+  {n:'回顾：付款售后',p:[['Your satisfaction is our top priority.','您的满意是我们的首要任务。'],['Please keep the receipt for any future exchanges.','请保留小票以备将来换货。'],['We stand behind every product we sell.','我们为售出的每一件产品负责。']]},
+  {n:'综合实战对话',p:[['I have been coming to this store for years and I love it.','我来这家店好几年了，非常喜欢。'],['You are by far the best salesperson I have met.','你是我遇到过最好的导购。'],['I will definitely recommend this place to everyone I know.','我一定会向所有认识的人推荐这里。']],
+   c:[['I want to thank you for your amazing service.','感谢你出色的服务。'],['It was truly my pleasure working with you.','为您服务真的是我的荣幸。'],['I hope to see you again very soon!','希望很快再见到您！'],['You can count on it!','一定会的！']]},
+  {n:'毕业测试：自由表达',p:[['I can now communicate confidently in English.','我现在能自信地用英语交流了。'],['Learning English has opened so many doors for me.','学英语为我打开了很多扇门。'],['This is not the end — it is just the beginning.','这不是结束，这只是开始。']]},
+  {n:'🎉 恭喜毕业！',p:[['You have completed the 6-month English learning journey!','你完成了6个月的英语学习之旅！'],['Keep practicing every day — consistency is everything.','每天坚持练习，坚持就是一切。'],['The world is yours — go explore it in English!','世界是你的了，用英语去探索吧！']]}
+]}
+];
+
+// ============ 原有零售短句合集（扩展版）============
+const PHRASES = {
+'接待问候':[['Hello! Welcome to our store.','您好！欢迎光临。'],['How can I help you today?','今天有什么可以帮您的？'],['Are you looking for anything specific?','您在找什么特定的款式吗？'],['Feel free to look around.','请随便看看。'],['Let me know if you need any help.','有需要随时叫我。'],['This way, please.','这边请。'],['Please take your time.','不着急慢慢看。'],['Is this your first time here?','第一次来我们家吗？']],
+'商品介绍':[['This is one of our best-sellers.','这是我们销量最好的款之一。'],['It is very popular this season.','这季非常流行。'],['The quality is absolutely excellent.','质量非常好。'],['It goes well with almost anything.','这件很百搭。'],['Would you like to try the other color?','要试试另一个颜色吗？'],['This is 100% pure cotton.','这是100%纯棉。'],['The fabric is soft, lightweight, and durable.','面料柔软轻薄还耐穿。']],
+'尺码与试穿':[['What size are you looking for?','您找什么尺码？'],['We have sizes from XS to XXL.','我们有XS到XXL码。'],['This runs a bit small. Take a size up.','这款偏小，换大一码。'],['Would you like to try it on?','要试穿一下吗？'],['The fitting room is over there.','试衣间在那边。'],['How does it fit? Comfortable?','穿起来怎么样？舒服吗？'],['It looks absolutely amazing on you!','您穿上太好看了！'],['This color really suits your skin tone.','这个颜色很衬您的肤色。']],
+'价格与付款':[['We accept cash, card, and mobile payment.','支持现金、刷卡和手机支付。'],['Would you like a receipt?','需要小票吗？'],['Please scan the QR code to pay.','请扫码支付。'],['Your total is 299 yuan.','一共299元。'],['Here is your change and receipt.','找您的钱和小票。'],['We have a buy-one-get-one-half-off deal.','有第二件半价活动。'],['Members get an extra 10% off.','会员额外9折。'],['You can return or exchange within 30 days.','30天内可退换。']],
+'库存与售后':[['Let me check if we have it in stock.','我帮您查一下库存。'],['Yes, we have this in stock.','这件还有货。'],['Sorry, this one is out of stock.','不好意思这件没货了。'],['We can order it for you.','我们可以帮您订。'],['A new shipment will arrive next week.','下周有新货到。'],['This is the last one.','这是最后一件了。'],['I can reserve it in your size.','可以帮您预留您的码。'],['Sale items are final sale, cannot be returned.','特价商品不退不换。']],
+'日常寒暄':[['How is your day going?','今天过得怎么样？'],['Did you have a good weekend?','周末过得好吗？'],['How have you been lately?','最近怎么样？'],['What do you like to do in your free time?','空闲时间喜欢做什么？'],['Have you seen any good movies lately?','最近看了什么好电影吗？'],['It is such a beautiful day today!','今天天气真好！'],['Looks like it might rain later.','看起来待会可能要下雨。'],['I tried a new restaurant and it was amazing.','试了一家新餐厅太棒了。']],
+'社交交流':[['It was really nice chatting with you!','和你聊天真开心！'],['We should grab coffee sometime.','改天一起喝咖啡吧。'],['I had a great time talking to you.','和你聊得很愉快。'],['Keep in touch!','保持联系！'],['Take care of yourself.','照顾好自己。'],['Let me know if you need anything.','需要什么随时说。'],['I am here for you.','我支持你。'],['You have got this! I believe in you.','你能行的！我相信你。']]
 };
 
-// ===== 渲染短句卡片 =====
-function renderCards(container, data, pageName, sectionName) {
-  data.forEach((item, i) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.setAttribute('data-en', item.en);
-    card.onclick = function(e) {
-      if (e.target.closest('.delete-btn')) return;
-      speak(item.en);
-    };
-    card.innerHTML = `
-      <div class="card-left">
-        <div class="card-en">${item.en}</div>
-        <div class="card-zh">${item.zh}</div>
+// ============ 工具函数 ============
+function speak(text){
+  if(!('speechSynthesis' in window)){showToast('浏览器不支持语音朗读');return}
+  speechSynthesis.cancel()
+  const u = new SpeechSynthesisUtterance(text)
+  u.lang='en-US'; u.rate=0.85; u.pitch=1
+  speechSynthesis.speak(u)
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast')
+  t.textContent=msg; t.classList.add('show')
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800)
+}
+
+// ============ Tab切换 ============
+document.getElementById('tabs').addEventListener('click',function(e){
+  if(!e.target.classList.contains('tab'))return
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+  e.target.classList.add('active')
+  const p=e.target.getAttribute('data-page')
+  document.querySelectorAll('.page').forEach(g=>g.classList.remove('active'))
+  document.getElementById(p).classList.add('active')
+  if(p==='study')renderStudy()
+  else if(p==='custom')renderCustom()
+})
+
+// ============ 今日学习 ============
+function getProgress(){
+  return JSON.parse(localStorage.getItem('studyProgress')||'{"done":{},"streak":0,"lastDate":"","totalDone":0}')
+}
+function saveProgress(p){localStorage.setItem('studyProgress',JSON.stringify(p))}
+
+function getTodayIndex(){
+  const start=new Date('2026-07-13')
+  const today=new Date()
+  today.setHours(0,0,0,0)
+  const days=Math.floor((today-start)/(1000*60*60*24))
+  return Math.max(0,Math.min(days,167))
+}
+
+function renderStudy(){
+  const d=document.getElementById('study')
+  const idx=getTodayIndex()
+  const prog=getProgress()
+  const totalDays=168
+
+  // 计算周和天
+  let weekIdx=0, dayIdx=idx, remaining=idx
+  while(remaining>=7){remaining-=7; weekIdx++}
+  dayIdx=remaining
+  if(weekIdx>=CURR.length)weekIdx=CURR.length-1
+  const week=CURR[weekIdx]
+  if(dayIdx>=week.d.length)dayIdx=week.d.length-1
+  const day=week.d[dayIdx]
+
+  // 连续打卡
+  const todayStr=new Date().toISOString().slice(0,10)
+  const yesterdayStr=new Date(Date.now()-86400000).toISOString().slice(0,10)
+  if(prog.lastDate===yesterdayStr && !prog.done[idx]){
+    prog.streak++
+  }else if(prog.lastDate!==yesterdayStr && prog.lastDate!==todayStr && !prog.done[idx]){
+    prog.streak=0
+  }
+  prog.lastDate=todayStr
+  saveProgress(prog)
+
+  const isDone=prog.done[idx]
+  const doneCount=Object.keys(prog.done).length
+  const progressPct=Math.round(doneCount/totalDays*100)
+
+  // 确定标签
+  let tagHTML=''
+  if(week.m<=2)tagHTML='<span class="tag tag-retail">零售场景</span>'
+  else if(week.m<=4)tagHTML='<span class="tag tag-daily">日常对话</span>'
+  else tagHTML='<span class="tag tag-adv">进阶表达</span>'
+
+  d.innerHTML=`
+    <div class="study-header">
+      <div class="study-day">第 ${idx+1} 天</div>
+      <div class="study-label">${week.m}月 · ${week.w} · ${day.n}</div>
+      ${tagHTML}
+      <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
+      <div class="progress-text">总进度 ${doneCount}/${totalDays} (${progressPct}%)</div>
+    </div>
+
+    <div class="streak-box">
+      <div class="streak-item"><div class="streak-num">🔥 ${prog.streak}</div><div class="streak-label">连续打卡</div></div>
+      <div class="streak-item"><div class="streak-num">⭐ ${doneCount}</div><div class="streak-label">累计完成</div></div>
+    </div>
+
+    <div class="week-header">
+      <div class="wk-title">第${weekIdx+1}周 · ${week.w}</div>
+      <div class="wk-sub">第${week.m}个月 | 每日3句 + 1个场景对话</div>
+    </div>
+
+    <div class="section-title">📝 今日新短句</div>
+    ${day.p.map(item=>`
+      <div class="card" onclick="speak('${item[0].replace(/'/g,"\\'")}')">
+        <div class="card-left"><div class="card-en">${item[0]}</div><div class="card-zh">${item[1]}</div></div>
+        <div class="speak-icon">🔊</div>
       </div>
-      <div class="speak-icon">🔊</div>
-    `;
-    container.appendChild(card);
-  });
+    `).join('')}
+
+    ${day.c?`
+    <div class="conv-box">
+      <div class="conv-title">💬 场景对话</div>
+      ${day.c.map(line=>`
+        <div class="conv-line" onclick="speak('${line[0].replace(/'/g,"\\'")}')">
+          <div class="conv-en">${line[0]}</div>
+          <div class="conv-zh">${line[1]}</div>
+        </div>
+      `).join('')}
+    </div>
+    `:''}
+
+    <button class="check-btn${isDone?' done':''}" id="checkBtn" ${isDone?'disabled':''}>
+      ${isDone?'✅ 今日已完成':'✅ 打卡完成今日学习'}
+    </button>
+  `
+
+  if(!isDone){
+    document.getElementById('checkBtn').addEventListener('click',function(){
+      const p=getProgress()
+      p.done[idx]=true
+      p.totalDone=(p.totalDone||0)+1
+      if(!p.streakDate||p.streakDate!==todayStr){
+        if(p.streakDate===yesterdayStr)p.streak++
+        else p.streak=1
+        p.streakDate=todayStr
+      }
+      saveProgress(p)
+      renderStudy()
+      showToast('🎉 打卡成功！继续加油！')
+    })
+  }
 }
 
-// ===== 构建各个页面 =====
-function buildPages() {
-  // 首页
-  const home = document.getElementById('home');
-  home.innerHTML = '';
-  for (const [section, items] of Object.entries(phrases.home)) {
-    const title = document.createElement('div');
-    title.className = 'section-title';
-    title.textContent = section === 'greeting' ? '接待问候' : section === 'service' ? '引导服务' : '支付结账';
-    home.appendChild(title);
-    renderCards(home, items, 'home', section);
-  }
+// ============ 短语合集（支持搜索 + 分类折叠）============
+function renderPhrases(){
+  const d=document.getElementById('phrases')
+  let html='<div style="margin-bottom:12px"><input type="text" id="searchInput" placeholder="🔍 搜索短句..." style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none"></div>'
+  html+='<div id="searchResults" style="display:none"></div><div id="phraseSections">'
 
-  // 男女同款
-  const unisex = document.getElementById('unisex');
-  unisex.innerHTML = '';
-  for (const [section, items] of Object.entries(phrases.unisex)) {
-    const title = document.createElement('div');
-    title.className = 'section-title';
-    title.textContent = section === 'style' ? '款式说明' : '推荐话术';
-    unisex.appendChild(title);
-    renderCards(unisex, items, 'unisex', section);
-  }
+  const entries=Object.entries(PHRASES)
+  entries.forEach(([title,items],si)=>{
+    html+=`<div class="month-divider">📌 ${title} (${items.length}句)</div>`
+    items.forEach(item=>{
+      html+=`<div class="card phrase-card" data-en="${item[0].replace(/"/g,'&quot;')}" data-zh="${item[1].replace(/"/g,'&quot;')}" data-section="${title}">
+        <div class="card-left"><div class="card-en">${item[0]}</div><div class="card-zh">${item[1]}</div></div>
+        <div class="speak-icon">🔊</div>
+      </div>`
+    })
+  })
+  html+='</div>'
+  d.innerHTML=html
 
-  // 库存尺码
-  const stock = document.getElementById('stock');
-  stock.innerHTML = '';
-  for (const [section, items] of Object.entries(phrases.stock)) {
-    const title = document.createElement('div');
-    title.className = 'section-title';
-    title.textContent = section === 'size' ? '尺码相关' : '库存查询';
-    stock.appendChild(title);
-    renderCards(stock, items, 'stock', section);
-  }
+  // 点击播放
+  d.querySelectorAll('.phrase-card').forEach(card=>{
+    card.addEventListener('click',function(){speak(this.getAttribute('data-en'))})
+  })
 
-  // 试穿建议
-  const fitting = document.getElementById('fitting');
-  fitting.innerHTML = '';
-  for (const [section, items] of Object.entries(phrases.fitting)) {
-    const title = document.createElement('div');
-    title.className = 'section-title';
-    title.textContent = section === 'try' ? '引导试穿' : '试穿反馈';
-    fitting.appendChild(title);
-    renderCards(fitting, items, 'fitting', section);
-  }
-
-  // 我的短句
-  renderCustomPage();
+  // 搜索功能
+  const searchInput=d.querySelector('#searchInput')
+  searchInput.addEventListener('input',function(){
+    const q=this.value.trim().toLowerCase()
+    const results=d.querySelector('#searchResults')
+    const sections=d.querySelector('#phraseSections')
+    if(!q){results.style.display='none'; sections.style.display='block'; d.querySelectorAll('.phrase-card').forEach(c=>c.style.display=''); return}
+    results.style.display='block'; sections.style.display='none'
+    let found=[]
+    d.querySelectorAll('.phrase-card').forEach(card=>{
+      const en=card.getAttribute('data-en').toLowerCase()
+      const zh=card.getAttribute('data-zh').toLowerCase()
+      if(en.includes(q)||zh.includes(q))found.push(card)
+    })
+    if(found.length===0){results.innerHTML='<div class="empty-hint">没有找到匹配的短句</div>'}
+    else{results.innerHTML=''; found.forEach(c=>results.appendChild(c.cloneNode(true)));
+      results.querySelectorAll('.phrase-card').forEach(c=>c.addEventListener('click',function(){speak(this.getAttribute('data-en'))}))}
+  })
 }
 
-// ===== 自定义短句 =====
-function renderCustomPage() {
-  const custom = document.getElementById('custom');
-  custom.innerHTML = '';
-
-  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
-
-  if (saved.length === 0) {
-    custom.innerHTML = '<div class="empty-hint">还没有添加自定义短句<br>在下方输入你的专属短句吧</div>';
-  } else {
-    saved.forEach((item, i) => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.onclick = function(e) {
-        if (e.target.closest('.delete-btn')) return;
-        speak(item.en);
-      };
-      card.innerHTML = `
-        <div class="card-left">
-          <div class="card-en">${item.en}</div>
-          <div class="card-zh">${item.zh}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <button class="delete-btn" data-index="${i}" title="删除">×</button>
-          <div class="speak-icon" style="margin-left:0;">🔊</div>
-        </div>
-      `;
-      card.querySelector('.delete-btn').addEventListener('click', function(e) {
-        e.stopPropagation();
-        deletePhrase(i);
-      });
-      custom.appendChild(card);
-    });
-  }
-
-  // 添加表单
-  const addSection = document.createElement('div');
-  addSection.className = 'add-section';
-  addSection.innerHTML = `
-    <h3>添加新短句</h3>
+// ============ 我的短句 ============
+function renderCustom(){
+  const d=document.getElementById('custom')
+  const saved=JSON.parse(localStorage.getItem('customPhrases')||'[]')
+  let html=''
+  if(saved.length===0)html+='<div class="empty-hint">还没有自定义短句<br>在下方添加你的专属短句吧</div>'
+  else saved.forEach((item,i)=>{
+    html+=`<div class="card" onclick="if(!event.target.closest('.delete-btn'))speak('${item.en.replace(/'/g,"\\'")}')">
+      <div class="card-left"><div class="card-en">${item.en}</div><div class="card-zh">${item.zh}</div></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="delete-btn" data-idx="${i}">×</button>
+        <div class="speak-icon" style="margin-left:0">🔊</div>
+      </div>
+    </div>`
+  })
+  html+=`<div class="add-section"><h3>➕ 添加新短句</h3>
     <input type="text" id="enInput" placeholder="输入英文短句">
     <input type="text" id="zhInput" placeholder="输入中文翻译">
-    <button id="addBtn">添加到我的短句</button>
-  `;
-  custom.appendChild(addSection);
+    <button class="btn-primary" id="addBtn">添加到我的短句</button>
+  </div>`
+  d.innerHTML=html
 
-  document.getElementById('addBtn').addEventListener('click', addPhrase);
+  // 删除
+  d.querySelectorAll('.delete-btn').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      e.stopPropagation()
+      const i=parseInt(this.getAttribute('data-idx'))
+      const s=JSON.parse(localStorage.getItem('customPhrases')||'[]')
+      s.splice(i,1)
+      localStorage.setItem('customPhrases',JSON.stringify(s))
+      renderCustom(); showToast('已删除')
+    })
+  })
+
+  // 添加
+  const addBtn=d.querySelector('#addBtn')
+  if(addBtn)addBtn.addEventListener('click',function(){
+    const en=document.getElementById('enInput').value.trim()
+    const zh=document.getElementById('zhInput').value.trim()
+    if(!en||!zh){showToast('请填写英文和中文');return}
+    const s=JSON.parse(localStorage.getItem('customPhrases')||'[]')
+    s.push({en,zh})
+    localStorage.setItem('customPhrases',JSON.stringify(s))
+    renderCustom(); showToast('已添加！')
+  })
 }
 
-function addPhrase() {
-  const en = document.getElementById('enInput').value.trim();
-  const zh = document.getElementById('zhInput').value.trim();
-  if (!en || !zh) { showToast('请填写英文和中文'); return; }
-  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
-  saved.push({ en, zh });
-  localStorage.setItem('customPhrases', JSON.stringify(saved));
-  renderCustomPage();
-  showToast('已添加！');
-}
-
-function deletePhrase(index) {
-  const saved = JSON.parse(localStorage.getItem('customPhrases') || '[]');
-  saved.splice(index, 1);
-  localStorage.setItem('customPhrases', JSON.stringify(saved));
-  renderCustomPage();
-  showToast('已删除');
-}
-
-// ===== 语音朗读 =====
-function speak(text) {
-  if (!('speechSynthesis' in window)) {
-    showToast('您的浏览器不支持语音朗读');
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-US';
-  utterance.rate = 0.85;
-  utterance.pitch = 1;
-  window.speechSynthesis.speak(utterance);
-}
-
-// ===== Tab 切换 =====
-document.getElementById('tabs').addEventListener('click', function(e) {
-  if (!e.target.classList.contains('tab')) return;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  e.target.classList.add('active');
-  const pageName = e.target.getAttribute('data-page');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageName).classList.add('active');
-  if (pageName === 'custom') renderCustomPage();
-});
-
-// ===== Toast 提示 =====
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(() => toast.classList.remove('show'), 1800);
-}
-
-// ===== 初始化 =====
-buildPages();
-
-// ===== PWA 注册 =====
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    // Simple cache-first service worker
-    if (!navigator.serviceWorker.controller) {
-      // No SW needed for basic PWA installability
-    }
-  });
-}
+// ============ 初始化 ============
+renderStudy()    // 默认显示今日学习
+renderPhrases()
+renderCustom()
 </script>
 </body>
 </html>

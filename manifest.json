@@ -1,7 +1,7 @@
 {
-  "name": "零售导购英语短句手册",
+  "name": "零售导购英语 - 6个月学习计划",
   "short_name": "零售英语",
-  "description": "零售导购常用英语短句，点击可发音，支持自定义添加",
+  "description": "从零售场景出发，6个月渐进式英语学习，每天3句+场景对话，支持语音发音",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
