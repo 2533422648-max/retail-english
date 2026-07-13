@@ -321,12 +321,24 @@ function saveMy(v){localStorage.setItem(LS.my,JSON.stringify(v))}
 function getReview(){try{return JSON.parse(localStorage.getItem(LS.review)||'{}')}catch(e){return{}}}
 function saveReview(v){localStorage.setItem(LS.review,JSON.stringify(v))}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
-function speak(t){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.speak(u)}
+const synthLoading=new Set();
+function speak(t,btnEl){
+  // 防止重复点击同一个按钮
+  if(btnEl&&synthLoading.has(btnEl)) return;
+  if(btnEl){synthLoading.add(btnEl);btnEl.disabled=true;btnEl.style.opacity='0.5'}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='en-US';u.rate=0.85;
+    u.onend=u.onerror=()=>{if(btnEl){synthLoading.delete(btnEl);btnEl.disabled=false;btnEl.style.opacity=''}};
+    speechSynthesis.speak(u);
+  }catch(e){if(btnEl){synthLoading.delete(btnEl);btnEl.disabled=false;btnEl.style.opacity=''};toast('发音引擎加载中，请稍后再试')}
+}
 
 // 计时器
 function startTimer(){stopTimer();timerSec=0;timerId=setInterval(()=>{timerSec++;updateTimer()},1000)}
 function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
-function updateTimer(){const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('timer-display');if(el)el.innerHTML='⏱ <b>'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'</b>'}
+function updateTimer(){const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('timer-display');if(el&&el.children[1])el.children[1].textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 
 // 寻找当前天的数据
 function findDay(){
@@ -352,13 +364,51 @@ function checkIn(){
   toast('🎉 打卡成功！今天你练了 '+Math.floor(timerSec/60)+' 分钟，继续加油！');
 }
 
-// 标记某步完成
+// 标记某步完成 — 增量更新，不重绘全页
 function markStep(step){
   const ss=getSteps(),k='d'+currentDay;
   if(!ss[k]) ss[k]={};
   ss[k][['flash','pron','dict','trans','speak','gram'][step]]=true;
   saveSteps(ss);
-  renderStudy();
+  // 把当前 zone 内容替换为完成态
+  const zones=document.querySelectorAll('#page-study .zone');
+  if(zones[step]){
+    zones[step].querySelector('h3').innerHTML=zones[step].querySelector('h3').innerHTML.replace(/STEP \d:.*?(?=<span|$)/,'STEP '+(step+1)+': ');
+    const inner=zones[step].querySelector('h3').nextElementSibling||zones[step];
+    // 只替换本 zone 内从 h3 之后的内容
+    let el=zones[step].querySelector('h3').nextElementSibling;
+    while(el){const nxt=el.nextElementSibling;el.remove();el=nxt}
+    const done=document.createElement('div');
+    done.style.cssText='text-align:center;color:#27ae60;font-weight:600;padding:20px 0';
+    done.textContent='✅ 本步已完成';
+    zones[step].appendChild(done);
+  }
+  // 增量更新：只刷新步骤圆点 + 按钮
+  updateStepDots();
+  updateCheckInBtn();
+  // 滚动到下一步
+  if(zones[step+1]) zones[step+1].scrollIntoView({behavior:'smooth',block:'center'});
+  toast('完成！继续下一步 →');
+}
+function updateStepDots(){
+  const ss=getSteps(),k='d'+currentDay;
+  const dots=document.querySelectorAll('.step-dot');
+  const stepNames=['flash','pron','dict','trans','speak','gram'];
+  let cp=0;
+  for(let i=0;i<6;i++) if(ss[k]&&ss[k][stepNames[i]]) cp++;
+  dots.forEach((d,i)=>{
+    d.className='step-dot';
+    if(ss[k]&&ss[k][stepNames[i]]) d.classList.add('done');
+    else if(i===cp||(cp===6&&i===5)) d.classList.add('current');
+  });
+}
+function updateCheckInBtn(){
+  const doneDays=getDone(),alldone=allStepsDone(),isDone=doneDays.includes(currentDay);
+  const btn=document.getElementById('btn-checkin');
+  if(!btn) return;
+  if(isDone){btn.textContent='✅ 今日已完成 · 明天继续加油！';btn.className='btn-checkin done';btn.disabled=true}
+  else if(alldone){btn.textContent='🎯 全部完成，立即打卡！';btn.className='btn-checkin ready';btn.disabled=false}
+  else{btn.textContent='🔒 请完成上面全部 6 步训练';btn.className='btn-checkin locked';btn.disabled=false}
 }
 
 // ============================================================
@@ -388,6 +438,12 @@ function initReviewForDay(dayIdx){
     if(!data[key]){const next=new Date();next.setDate(next.getDate()+1);r[key]={en:p[0],zh:p[1],lastReview:'',nextReview:next.toISOString().slice(0,10),interval:1,reviewCount:0}}
   });
   if(Object.keys(r).length){Object.assign(data,r);saveReview(data)}
+}
+function reviewItem(btn,key,grade){
+  reviewAction(key,grade);
+  // 动画移除该复习项
+  const item=btn.closest('.ritem');
+  if(item){item.style.transition='opacity .3s,transform .3s';item.style.opacity='0';item.style.transform='translateX(30px)';setTimeout(()=>{if(item.parentNode)item.remove();updateCheckInBtn()},350)}
 }
 function daysAgo(d){return Math.floor((new Date()-new Date(d))/86400000)}
 
@@ -429,7 +485,7 @@ function renderStudy(){
   h+='</div>';
 
   // 计时器
-  h+='<div class="timer" id="timer-display">⏱ 点击下方开始计时</div>';
+  h+='<div class="timer" id="timer-display">⏱ <b id="timer-num">00:00</b></div>';
 
   // STEP 1: 闪卡记词
   h+='<div class="zone"><h3><span class="emoji">📖</span> STEP 1: 闪卡记词<span class="tip">看英想中 · 10分钟</span></h3>';
@@ -519,9 +575,9 @@ function renderStudy(){
   // 间隔复习
   if(reviewItems.length>0){
     h+='<div style="font-weight:700;color:#555;font-size:13px;margin-bottom:4px">🔄 今日待复习 ('+reviewItems.length+'句)</div>';
-    reviewItems.forEach(item=>{
+      reviewItems.forEach(item=>{
       const ago=item.lastReview?daysAgo(item.lastReview):'新';
-      h+='<div class="ritem"><div class="ri-info" onclick="speak(\''+item.en.replace(/'/g,"\\'")+'\')"><div class="ri-en">'+item.en+'</div><div class="ri-zh">'+item.zh+'</div><div class="ri-ago">'+(typeof ago==='number'?ago+'天前':ago)+'</div></div><div class="ri-btns"><button class="ri-btn ri-again" onclick="reviewAction(\''+item.key+'\',\'again\');renderStudy()">再练</button><button class="ri-btn ri-good" onclick="reviewAction(\''+item.key+'\',\'good\');renderStudy()">掌握</button><button class="ri-btn ri-easy" onclick="reviewAction(\''+item.key+'\',\'easy\');renderStudy()">简单</button></div></div>';
+      h+='<div class="ritem" id="ritem-'+item.key+'"><div class="ri-info" onclick="speak(\''+item.en.replace(/'/g,"\\'")+'\')"><div class="ri-en">'+item.en+'</div><div class="ri-zh">'+item.zh+'</div><div class="ri-ago">'+(typeof ago==='number'?ago+'天前':ago)+'</div></div><div class="ri-btns"><button class="ri-btn ri-again" onclick="reviewItem(this,\''+item.key+'\',\'again\')">再练</button><button class="ri-btn ri-good" onclick="reviewItem(this,\''+item.key+'\',\'good\')">掌握</button><button class="ri-btn ri-easy" onclick="reviewItem(this,\''+item.key+'\',\'easy\')">简单</button></div></div>';
     });
   }
   if(!stepDone[5]){
@@ -628,7 +684,16 @@ function compareText(said,target){
 // ============================================================
 // STEP 3: 听写逻辑
 // ============================================================
-function playDict(){speak(dayData.p[dictIdx][0])}
+let dictSpkBusy=false;
+function playDict(){
+  if(dictSpkBusy) return;
+  dictSpkBusy=true;
+  try{speechSynthesis.cancel()}catch(_){}
+  const u=new SpeechSynthesisUtterance(dayData.p[dictIdx][0]);
+  u.lang='en-US';u.rate=0.8;
+  u.onend=u.onerror=()=>{dictSpkBusy=false};
+  speechSynthesis.speak(u);
+}
 function checkDict(){
   const inp=document.getElementById('dict-input');
   const ans=document.getElementById('dict-answer');
