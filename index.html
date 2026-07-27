@@ -323,24 +323,47 @@ function saveLearned(v){localStorage.setItem(LS.learned,JSON.stringify(v))}
 function getReview(){try{return JSON.parse(localStorage.getItem(LS.review)||'{}')}catch(e){return{}}}
 function saveReview(v){localStorage.setItem(LS.review,JSON.stringify(v))}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+// ===== 发音引擎：自动挑选更自然的声音 + 防卡死 =====
+let enVoices=[];
+function loadVoices(){
+  try{enVoices=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().indexOf('en')===0)}catch(e){}
+}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function pickVoice(){
+  if(!enVoices.length) loadVoices();
+  // 按自然度优先挑声音（Google/微软在线自然音 > 系统自带）
+  const prefs=['Google US English','Microsoft Aria','Microsoft Jenny','Microsoft Guy','Microsoft Ana','Samantha','Alex','Microsoft Zira','Google UK English'];
+  for(const p of prefs){const v=enVoices.find(v=>v.name.indexOf(p)>=0);if(v) return v}
+  const us=enVoices.find(v=>v.lang==='en-US');return us||enVoices[0]||null;
+}
 const synthLoading=new Set();
+let speakGen=0;
 function speak(t,btnEl){
   // 防止重复点击同一个按钮
   if(btnEl&&synthLoading.has(btnEl)) return;
+  let guard=null;
+  const release=()=>{if(guard){clearTimeout(guard);guard=null}
+    if(btnEl){synthLoading.delete(btnEl);btnEl.disabled=false;btnEl.style.opacity=''}};
   if(btnEl){synthLoading.add(btnEl);btnEl.disabled=true;btnEl.style.opacity='0.5'}
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(t);
-    u.lang='en-US';u.rate=0.85;
-    u.onend=u.onerror=()=>{if(btnEl){synthLoading.delete(btnEl);btnEl.disabled=false;btnEl.style.opacity=''}};
-    speechSynthesis.speak(u);
-  }catch(e){if(btnEl){synthLoading.delete(btnEl);btnEl.disabled=false;btnEl.style.opacity=''};toast('发音引擎加载中，请稍后再试')}
+    const v=pickVoice();if(v)u.voice=v;
+    u.lang='en-US';u.rate=0.88;u.pitch=1;
+    u.onend=u.onerror=release;
+    // 兜底：onend 不触发时也能恢复，防止按钮永久卡死
+    guard=setTimeout(release,Math.min(Math.max(2500,t.length*160),10000));
+    // Chrome 的坑：cancel() 后立刻 speak() 会丢语音，延迟 60ms 规避；
+    // 用 speakGen 保证快速连点时只有最后一次点击真正发声
+    const g=++speakGen;
+    setTimeout(()=>{if(g!==speakGen){release();return}try{speechSynthesis.speak(u)}catch(e){release()}},60);
+  }catch(e){release();toast('发音引擎加载中，请稍后再试')}
 }
 
-// 计时器
-function startTimer(){stopTimer();timerSec=0;timerId=setInterval(()=>{timerSec++;updateTimer()},1000)}
+// 计时器（重绘页面时不清零，累计今日练习时长）
+function startTimer(){stopTimer();timerId=setInterval(()=>{timerSec++;updateTimer()},1000)}
 function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
-function updateTimer(){const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('timer-display');if(el&&el.children[1])el.children[1].textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function updateTimer(){const m=Math.floor(timerSec/60),s=timerSec%60;const el=document.getElementById('timer-num');if(el)el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 
 // 寻找当前天的数据
 function findDay(){
@@ -377,23 +400,33 @@ function archiveToday(){
   saveLearned(learned);
 }
 
+// ===== 再练一次：不清除完成记录，只重新打开该步练习界面 =====
+let redoStepIdx=-1;
+function redoStep(step){
+  redoStepIdx=step;
+  renderStudy();
+  const zones=document.querySelectorAll('#page-study .zone');
+  if(zones[step]) zones[step].scrollIntoView({behavior:'smooth',block:'start'});
+}
+function stepDoneHTML(step){
+  return '<div style="text-align:center;color:#27ae60;font-weight:600;padding:14px 0 8px">✅ 本步已完成</div>'
+    +'<button class="btn btn-gray" style="width:100%" onclick="redoStep('+step+')">🔁 再练一次（不影响打卡）</button>';
+}
+
 // 标记某步完成 — 增量更新，不重绘全页
 function markStep(step){
   const ss=getSteps(),k='d'+currentDay;
   if(!ss[k]) ss[k]={};
   ss[k][['flash','pron','dict','trans','speak','gram'][step]]=true;
   saveSteps(ss);
-  // 把当前 zone 内容替换为完成态
+  redoStepIdx=-1;
+  // 把当前 zone 内容替换为完成态（带"再练一次"入口）
   const zones=document.querySelectorAll('#page-study .zone');
   if(zones[step]){
-    zones[step].querySelector('h3').innerHTML=zones[step].querySelector('h3').innerHTML.replace(/STEP \d:.*?(?=<span|$)/,'STEP '+(step+1)+': ');
-    const inner=zones[step].querySelector('h3').nextElementSibling||zones[step];
-    // 只替换本 zone 内从 h3 之后的内容
     let el=zones[step].querySelector('h3').nextElementSibling;
     while(el){const nxt=el.nextElementSibling;el.remove();el=nxt}
     const done=document.createElement('div');
-    done.style.cssText='text-align:center;color:#27ae60;font-weight:600;padding:20px 0';
-    done.textContent='✅ 本步已完成';
+    done.innerHTML=stepDoneHTML(step);
     zones[step].appendChild(done);
   }
   // 增量更新：只刷新步骤圆点 + 按钮
@@ -465,6 +498,8 @@ function daysAgo(d){return Math.floor((new Date()-new Date(d))/86400000)}
 // ============================================================
 function renderStudy(){
   stopTimer();
+  try{speechSynthesis.cancel()}catch(e){}
+  try{stopRecord()}catch(e){}
   currentDay=getTodayIdx();
   const fd=findDay();
   if(!fd) return;
@@ -502,38 +537,36 @@ function renderStudy(){
 
   // STEP 1: 闪卡记词
   h+='<div class="zone"><h3><span class="emoji">📖</span> STEP 1: 闪卡记词<span class="tip">看英想中 · 10分钟</span></h3>';
-  if(stepDone[0]){
-    h+='<div style="text-align:center;color:#27ae60;font-weight:600;padding:20px 0">✅ 本步已完成</div>';
+  if(stepDone[0]&&redoStepIdx!==0){
+    h+=stepDoneHTML(0);
   }else{
     flashIdx=0;
     h+='<div class="flash-count">第 <b id="fc">1</b>/6 张</div>';
     h+='<div class="flash" id="flash-card" onclick="flipFlash()">'+dayData.p[0][0]+'<br><span style="font-size:13px;opacity:.7">点击翻面看中文</span></div>';
-    h+='<div class="btn-row"><button class="btn btn-red" onclick="flashResult(false)">不认识</button><button class="btn btn-green" onclick="flashResult(true)">认识</button></div>';
+    h+='<div class="btn-row" id="flash-btns"><button class="btn btn-red" onclick="flashResult(false)">不认识</button><button class="btn btn-green" onclick="flashResult(true)">认识</button></div>';
     h+='<button class="btn btn-orange" style="width:100%;margin-top:8px" onclick="markStep(0);toast(\'闪卡完成！进入跟读\')">完成本步，进入跟读 →</button>';
   }
   h+='</div>';
 
   // STEP 2: 跟读纠音
   h+='<div class="zone"><h3><span class="emoji">🗣️</span> STEP 2: 跟读纠音<span class="tip">听→读→评 · 15分钟</span></h3>';
-  if(stepDone[1]){
-    h+='<div style="text-align:center;color:#27ae60;font-weight:600;padding:20px 0">✅ 本步已完成</div>';
+  if(stepDone[1]&&redoStepIdx!==1){
+    h+=stepDoneHTML(1);
   }else{
     pronIdx=0;
-    h+='<div style="text-align:center;font-size:12px;color:#999;margin-bottom:6px">第 <b id="pn">1</b>/6 句</div>';
+    h+='<div style="text-align:center;font-size:12px;color:#999;margin-bottom:6px">第 <b id="pn">1</b>/6 句 · 录音得分 ≥80 自动过关</div>';
     h+='<div class="voice-target" id="voice-target">'+dayData.p[0][0]+'</div>';
     h+='<div class="voice-btns"><button class="btn btn-gray" onclick="speak(dayData.p[pronIdx][0])">🔊 听发音</button><button class="btn btn-blue" id="btn-record" onclick="toggleRecord()">🎤 跟读录音</button></div>';
     h+='<div class="voice-score" id="voice-score"></div><div id="voice-result" style="text-align:center;font-size:12px;color:#666;min-height:18px"></div>';
-    h+='<div class="rate-row"><span style="font-size:11px;color:#999;padding:0 4px">自评：</span>';
-    for(let i=1;i<=5;i++) h+='<button class="rate-btn" onclick="ratePron('+i+')">'+i+'</button>';
-    h+='</div>';
+    h+='<div class="btn-row"><button class="btn btn-gray" onclick="prevPron()">← 上一句</button><button class="btn btn-blue" onclick="nextPron()">下一句 →</button></div>';
     h+='<button class="btn btn-orange" style="width:100%;margin-top:8px" onclick="markStep(1);toast(\'跟读完成！进入听写\')">完成本步，进入听写 →</button>';
   }
   h+='</div>';
 
   // STEP 3: 听写测试
   h+='<div class="zone"><h3><span class="emoji">✍️</span> STEP 3: 听写检测<span class="tip">听→写→对 · 10分钟</span></h3>';
-  if(stepDone[2]){
-    h+='<div style="text-align:center;color:#27ae60;font-weight:600;padding:20px 0">✅ 本步已完成</div>';
+  if(stepDone[2]&&redoStepIdx!==2){
+    h+=stepDoneHTML(2);
   }else{
     dictIdx=0;dictAttempted=false;
     h+='<div class="dict-count">第 <b id="dc">1</b>/3 句</div>';
@@ -548,8 +581,8 @@ function renderStudy(){
 
   // STEP 4: 中译英
   h+='<div class="zone"><h3><span class="emoji">🔁</span> STEP 4: 中译英<span class="tip">看中说英 · 10分钟</span></h3>';
-  if(stepDone[3]){
-    h+='<div style="text-align:center;color:#27ae60;font-weight:600;padding:20px 0">✅ 本步已完成</div>';
+  if(stepDone[3]&&redoStepIdx!==3){
+    h+=stepDoneHTML(3);
   }else{
     transIdx=0;
     h+='<div class="dict-count">第 <b id="tc">1</b>/3 句</div>';
@@ -564,8 +597,8 @@ function renderStudy(){
 
   // STEP 5: 自由表达
   h+='<div class="zone"><h3><span class="emoji">🎤</span> STEP 5: 自由表达<span class="tip">场景应答 · 10分钟</span></h3>';
-  if(stepDone[4]){
-    h+='<div style="text-align:center;color:#27ae60;font-weight:600;padding:20px 0">✅ 本步已完成</div>';
+  if(stepDone[4]&&redoStepIdx!==4){
+    h+=stepDoneHTML(4);
   }else{
     h+='<div class="scenario"><div class="prompt">🎬 场景任务</div><div class="desc">'+dayData.sp+'</div></div>';
     h+='<button class="btn btn-blue" style="width:100%;margin-bottom:8px" id="btn-speak" onclick="toggleSpeak()">🎤 开始录音回答</button>';
@@ -635,13 +668,22 @@ function flashResult(known){
   if(flashIdx>=dayData.p.length){
     document.getElementById('flash-card').innerHTML='✅ 全部 6 张闪卡已完成！';
     document.getElementById('fc').textContent='6';
-    document.querySelector('#page-study .zone .btn-row').style.display='none';
+    // 翻完后可直接再来一遍，不用完成本步
+    document.getElementById('flash-btns').innerHTML='<button class="btn btn-blue" style="width:100%" onclick="restartFlash()">🔁 再翻一遍</button>';
     return;
   }
   const card=document.getElementById('flash-card');
   card.classList.remove('reveal');
   card.innerHTML=dayData.p[flashIdx][0]+'<br><span style="font-size:13px;opacity:.7">点击翻面看中文</span>';
   document.getElementById('fc').textContent=flashIdx+1;
+}
+function restartFlash(){
+  flashIdx=0;
+  const card=document.getElementById('flash-card');
+  card.classList.remove('reveal');
+  card.innerHTML=dayData.p[0][0]+'<br><span style="font-size:13px;opacity:.7">点击翻面看中文</span>';
+  document.getElementById('fc').textContent='1';
+  document.getElementById('flash-btns').innerHTML='<button class="btn btn-red" onclick="flashResult(false)">不认识</button><button class="btn btn-green" onclick="flashResult(true)">认识</button>';
 }
 
 // ============================================================
@@ -664,8 +706,15 @@ function toggleRecord(){
     let cls='low',emoji='😅';
     if(pct>=80){cls='good';emoji='🎉'}else if(pct>=50){cls='ok';emoji='👍'}
     sc.innerHTML=emoji+' '+pct+'<span style="font-size:14px">%</span>';sc.className='voice-score '+cls;
-    document.getElementById('voice-result').innerHTML='你说：<b>"'+said+'"</b>';
     stopRecordUI();
+    if(pct>=80){
+      document.getElementById('voice-result').innerHTML='你说：<b>"'+said+'"</b><br><span style="color:#27ae60">✅ 过关！正在进入下一句…</span>';
+      // 若 1 秒内用户没手动切句，则自动前进
+      const myIdx=pronIdx;
+      setTimeout(()=>{if(pronIdx===myIdx) nextPron()},1000);
+    }else{
+      document.getElementById('voice-result').innerHTML='你说：<b>"'+said+'"</b><br>💪 再录一次，或点「下一句 →」跳过';
+    }
   };
   voiceRec.onerror=()=>{stopRecordUI();toast('没听清，靠近一点再试')};
   voiceRec.onend=()=>{stopRecordUI()};
@@ -676,15 +725,26 @@ function stopRecordUI(){
   const btn=document.getElementById('btn-record');
   if(btn){btn.textContent='🎤 跟读录音';btn.style.background='';btn.style.color=''}
 }
-function ratePron(score){
-  document.querySelectorAll('.rate-btn').forEach(b=>b.classList.remove('pick'));
-  event.target.classList.add('pick');
-  pronIdx++;
-  if(pronIdx>=dayData.p.length){toast('6句跟读全部完成！');return}
-  document.getElementById('pn').textContent=pronIdx+1;
+// 跟读：上一句 / 下一句 / 6句完成后自动标记本步完成
+function updatePronUI(){
+  const pn=document.getElementById('pn');if(!pn) return;
+  pn.textContent=pronIdx+1;
   document.getElementById('voice-target').textContent=dayData.p[pronIdx][0];
   document.getElementById('voice-score').innerHTML='';
   document.getElementById('voice-result').innerHTML='';
+}
+function nextPron(){
+  stopRecord();
+  if(pronIdx>=dayData.p.length-1){
+    // 6 句全部走完，自动完成本步
+    markStep(1);toast('6 句跟读全部完成！进入听写');
+    return;
+  }
+  pronIdx++;updatePronUI();
+}
+function prevPron(){
+  stopRecord();
+  if(pronIdx>0){pronIdx--;updatePronUI()}
 }
 function compareText(said,target){
   const sw=said.split(/\s+/).filter(w=>w.length>2);
@@ -697,15 +757,19 @@ function compareText(said,target){
 // ============================================================
 // STEP 3: 听写逻辑
 // ============================================================
-let dictSpkBusy=false;
+let dictSpkBusy=false,dictGuard=null;
 function playDict(){
   if(dictSpkBusy) return;
   dictSpkBusy=true;
+  const release=()=>{dictSpkBusy=false;if(dictGuard){clearTimeout(dictGuard);dictGuard=null}};
   try{speechSynthesis.cancel()}catch(_){}
-  const u=new SpeechSynthesisUtterance(dayData.p[dictIdx][0]);
+  const u=new SpeechSynthesisUtterance(dayData.p[Math.min(dictIdx,dayData.p.length-1)][0]);
+  const v=pickVoice();if(v)u.voice=v;
   u.lang='en-US';u.rate=0.8;
-  u.onend=u.onerror=()=>{dictSpkBusy=false};
-  speechSynthesis.speak(u);
+  u.onend=u.onerror=release;
+  // 兜底：onend 不触发时 8 秒后自动解锁，防止"播放听写"按钮永久失效
+  dictGuard=setTimeout(release,8000);
+  setTimeout(()=>{try{speechSynthesis.speak(u)}catch(e){release()}},60);
 }
 function checkDict(){
   const inp=document.getElementById('dict-input');
@@ -733,9 +797,9 @@ function nextDict(){
     document.getElementById('dict-answer').innerHTML='✅ 3句听写全部完成！';
     document.getElementById('dict-next').style.display='none';
     document.getElementById('dict-finish').style.display='block';
-    // hide check/reveal buttons
-    const btns=document.querySelectorAll('#page-study .zone:nth-child(5) .btn');
-    btns.forEach(b=>{if(b.textContent.includes('检查')||b.textContent.includes('显示'))b.style.display='none'});
+    // 只隐藏本区域内的 播放/检查/显示答案 按钮（之前 nth-child 选错区域，会误伤跟读区）
+    const zone=document.getElementById('dict-finish').closest('.zone');
+    zone.querySelectorAll('.btn').forEach(b=>{if(b.textContent.includes('播放')||b.textContent.includes('检查')||b.textContent.includes('显示'))b.style.display='none'});
     return;
   }
   document.getElementById('dc').textContent=dictIdx+1;
@@ -775,8 +839,9 @@ function nextTrans(){
     document.getElementById('trans-answer').innerHTML='✅ 3句翻译全部完成！';
     document.getElementById('trans-next').style.display='none';
     document.getElementById('trans-finish').style.display='block';
-    const btns=document.querySelectorAll('#page-study .zone:nth-child(6) .btn');
-    btns.forEach(b=>{if(b.textContent.includes('检查')||b.textContent.includes('显示'))b.style.display='none'});
+    // 只隐藏本区域内的 检查/显示答案 按钮（之前 nth-child 选错区域，会误伤听写区）
+    const zone=document.getElementById('trans-finish').closest('.zone');
+    zone.querySelectorAll('.btn').forEach(b=>{if(b.textContent.includes('检查')||b.textContent.includes('显示'))b.style.display='none'});
     return;
   }
   document.getElementById('tc').textContent=transIdx+1;
