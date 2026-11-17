@@ -1,0 +1,33 @@
+{
+  "name": "一句一练",
+  "short_name": "一句一练",
+  "description": "每天一句日常英语。离线也能练。",
+  "lang": "zh-CN",
+  "id": "/retail-english/yiju/",
+  "start_url": "/retail-english/yiju/",
+  "scope": "/retail-english/yiju/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#141210",
+  "theme_color": "#141210",
+  "icons": [
+    {
+      "src": "/retail-english/yiju/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/retail-english/yiju/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/retail-english/yiju/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
